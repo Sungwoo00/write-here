@@ -3,5 +3,20 @@
 @layer theme {
   :root {
     --card-bgc-brown: #f1e9dd;
+    --cardbgc-brown: #f1e9dd;
+    --cardbgc-blue: #eaf2f4;
+    --cardbgc-orange: #fff0e1;
+    --cardbgc-green: #eaf0e6;
+    --cardbgc-pink: #fff4f4;
+    --cardbgc-purple: #f8f3fe;
+    --cardbgc-gray: #e4e0e1;
+    --primary-white: #ffffff;
+    --logo-green: #417b45;
+    --login-bgc: #fffcf6;
+    --text-light-gray: #cbcbcb;
+    --text-light-gray2: #a7a7a7;
+    --text-light-green: #afc569;
+    --primary-pin: #fa6d6d;
+    --text-blue-gray:#6B7280;
   }
 }
