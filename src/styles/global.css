@@ -1,0 +1,7 @@
+@import 'tailwindcss';
+
+@layer theme {
+  :root {
+    --card-bgc-brown: #f1e9dd;
+  }
+}
