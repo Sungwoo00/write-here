@@ -1,4 +1,4 @@
-function NotFoundPage() {
+function NotFound() {
   return (
     <>
       <p role="alert" className="text-2xl font-black">
@@ -8,4 +8,4 @@ function NotFoundPage() {
   );
 }
 
-export default NotFoundPage;
+export default NotFound;
