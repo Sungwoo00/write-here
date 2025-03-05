@@ -2,22 +2,20 @@
 
 @layer theme {
   :root {
-    --card-bgc-brown: #f1e9dd;
-    --card-bgc-brown: #f1e9dd;
-    --card-bgc-blue: #eaf2f4;
-    --card-bgc-orange: #fff0e1;
-    --card-bgc-green: #eaf0e6;
-    --card-bgc-pink: #fff4f4;
-    --card-bgc-purple: #f8f3fe;
-    --card-bgc-gray: #e4e0e1;
-    --primary-white: #ffffff;
+    --card-brown: #f1e9dd;
+    --card-blue: #eaf2f4;
+    --card-orange: #fff0e1;
+    --card-green: #eaf0e6;
+    --card-pink: #fff4f4;
+    --card-purple: #f8f3fe;
+    --card-gray: #e4e0e1;
     --logo-green: #417b45;
-    --login-bgc: #fffcf6;
-    --text-light-gray: #cbcbcb;
-    --text-light-gray2: #a7a7a7;
-    --text-light-green: #afc569;
-    --primary-pin: #fa6d6d;
-    --text-blue-gray: #6b7280;
+    --logo-dark-green: #39673d;
+    --light-bage: #fffcf6;
+    --icon-red: #fb4a4d;
+    --light-gray: #a8a8a8;
+    --light-green: #afc569;
+    --dark-gray: #6b7280;
   }
 }
 
