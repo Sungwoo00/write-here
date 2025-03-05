@@ -11,7 +11,7 @@
     --card-gray: #e4e0e1;
     --logo-green: #417b45;
     --logo-dark-green: #39673d;
-    --light-bage: #fffcf6;
+    --light-beige: #fffcf6;
     --icon-red: #fb4a4d;
     --light-gray: #a8a8a8;
     --light-green: #afc569;
@@ -35,4 +35,13 @@
   font-family: 'Paperlogy';
   src: url('fonts/Paperlogy-6SemiBald.woff') format('woff');
   font-weight: bold;
+}
+.mask-icon {
+  background-color: currentColor;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-size: contain;
 }
