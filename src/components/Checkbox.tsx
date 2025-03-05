@@ -1,3 +1,5 @@
+import { useId } from 'react';
+
 interface CheckboxProps {
   checked: boolean;
   onChange: () => void;
@@ -5,10 +7,13 @@ interface CheckboxProps {
 }
 
 function Checkbox({ checked, onChange, label }: CheckboxProps) {
+  const id = useId(); 
+
   return (
     <div className="flex items-center space-x-2">
       <input
         type="checkbox"
+        id={id} 
         checked={checked}
         onChange={onChange}
         className={`
@@ -36,7 +41,7 @@ function Checkbox({ checked, onChange, label }: CheckboxProps) {
           d="M5 13l4 4L19 7"
         />
       </svg>
-      <label>{label}</label>
+      <label htmlFor={id}>{label}</label> 
     </div>
   );
 }
