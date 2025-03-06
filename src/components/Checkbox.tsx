@@ -24,7 +24,6 @@ function Checkbox({ checked, onChange, label }: CheckboxProps) {
           ${checked ? 'bg-[var(--logo-green)] relative' : 'bg-[var(--light-gray)]'} 
         `}
       />
-      {/* Use the SVG icon from the public folder */}
       <img
         src="/icons/icon-check.svg"
         alt="check-icon"
