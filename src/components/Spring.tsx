@@ -1,10 +1,14 @@
-function Spring() {
+interface SpringProps {
+  width: number;
+}
+
+function Spring({ width }: SpringProps) {
   return (
     <img
       src="/icons/spring.svg"
       alt=""
       aria-hidden="true"
-      width={22}
+      width={width}
       height={40}
     />
   );
