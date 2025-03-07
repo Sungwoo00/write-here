@@ -6,7 +6,7 @@ import { throttle } from 'lodash';
 function RendererSpring() {
   const divRef = useRef<HTMLDivElement>(null);
   const [springs, setSprings] = useState<number>(0);
-  const springWidth = 22;
+  const springWidth = 28;
 
   useEffect(() => {
     const initWidth = getWidth(divRef.current);
@@ -28,9 +28,11 @@ function RendererSpring() {
 
   return (
     <div className="w-auto m-4" ref={divRef}>
-      <div className="flex items-center">
+      <div className="flex justify-center">
         {[...Array(springs)].map((_, index) => (
-          <Spring key={index} width={springWidth} />
+          <div key={index} className={index > 0 ? '-ml-1.5' : ''}>
+            <Spring width={springWidth} />
+          </div>
         ))}
       </div>
       <div className="mt-4 text-sm text-gray-500"></div>
