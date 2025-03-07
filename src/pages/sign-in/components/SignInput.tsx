@@ -46,7 +46,7 @@ function SignInput({
           {label}
         </label>
         {value && (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 ml-2">
             {type === 'pw' && (
               <button
                 type="button"
