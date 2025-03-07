@@ -29,7 +29,7 @@ function SignInput({
       >
         <input
           id={fieldId}
-          type={isVisible ? 'password' : 'text'}
+          type={isVisible ? 'text' : 'password'}
           value={value}
           onChange={onChange}
           className=" w-full focus:outline-none text-[var(--dark-gray)]"
@@ -52,6 +52,7 @@ function SignInput({
                 type="button"
                 onClick={() => setIsVisible((prev) => !prev)}
                 className="flex items-center justify-center"
+                aria-label={isVisible ? '비밀번호 숨기기' : '비밀번호 보이기'}
               >
                 <span
                   className="w-4 h-4 lg:w-6 lg:h-6 bg-[var(--light-gray)]"

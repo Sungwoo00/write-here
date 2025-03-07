@@ -10,11 +10,12 @@ function SignIn() {
   return (
     <div>
       <SignInput
-        type="id"
+        type="pw"
         value={inputValue}
         label="아이디를 입력해주세요"
         onChange={handleChange}
         error="에러"
+        onClear={() => {}}
       ></SignInput>
     </div>
   );
