@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import SignInput from './components/SignInput';
+import SignInput from '@/components/level-2/SignInput';
 
 function SignIn() {
   const [inputValue, setInputValueChange] = useState('');
