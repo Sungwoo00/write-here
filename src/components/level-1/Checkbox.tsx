@@ -10,7 +10,7 @@ function Checkbox({ checked, onChange, label }: CheckboxProps) {
   const id = useId();
 
   return (
-    <div className="flex items-center space-x-2">
+    <div className="flex items-center space-x-2 text-[var(--dark-gray)]">
       <input
         type="checkbox"
         id={id}
@@ -27,7 +27,7 @@ function Checkbox({ checked, onChange, label }: CheckboxProps) {
       <img
         src="/icons/icon-check.svg"
         alt="check-icon"
-        className={`absolute w-4 h-4 ${checked ? 'block' : 'hidden'} pointer-events-none`}
+        className={`absolute w-4 h-4 pointer-events-none`}
         style={{ position: 'absolute', marginLeft: '2px', marginTop: '2px' }}
       />
       <label htmlFor={id}>{label}</label>
