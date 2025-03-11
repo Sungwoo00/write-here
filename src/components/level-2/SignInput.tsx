@@ -2,7 +2,8 @@ import { tm } from '@/utils/tw-merge';
 import { useId, useState } from 'react';
 
 interface SignInputProps {
-  type: 'id' | 'pw' | 'email';
+  name?: string;
+  type: 'text' | 'password' | 'email';
   value: string;
   label: string;
   isValid?: boolean;
@@ -12,6 +13,7 @@ interface SignInputProps {
 }
 
 function SignInput({
+  name,
   type,
   value,
   label,
@@ -30,8 +32,9 @@ function SignInput({
         hover:border-[var(--light-green)] focus-within:border-[var(--logo-green)] focus-within:hover:border-[var(--logo-green)]"
       >
         <input
+          name={name}
           id={fieldId}
-          type={type === 'id' ? 'text' : isVisible ? 'text' : 'password'}
+          type={type === 'password' ? (isVisible ? 'text' : type) : 'text'}
           value={value}
           onChange={onChange}
           className=" w-full focus:outline-none text-[var(--dark-gray)]"
@@ -49,12 +52,12 @@ function SignInput({
         </label>
         {value && (
           <div className="flex items-center gap-2 ml-2">
-            {type === 'pw' && (
+            {type === 'password' && (
               <button
                 type="button"
                 onClick={() => setIsVisible((prev) => !prev)}
                 className="flex items-center justify-center"
-                aria-label={isVisible ? '비밀번호 숨기기' : '비밀번호 보이기'}
+                aria-label={isVisible ? '비밀번호 보이기' : '비밀번호 숨기기기'}
               >
                 <span
                   className="w-4 h-4 lg:w-6 lg:h-6 bg-[var(--light-gray)]"
