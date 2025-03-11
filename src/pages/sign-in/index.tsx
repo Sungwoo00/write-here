@@ -3,7 +3,7 @@ import SignInput from '@/components/level-2/SignInput';
 
 function SignIn() {
   const [inputValue, setInputValueChange] = useState('');
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setInputValueChange(value);
   };

@@ -3,7 +3,7 @@ import { tm } from '@/utils/tw-merge';
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
-  detail: React.ReactNode;
+  children: React.ReactNode;
   buttonConfirmText: string;
   buttonCancelText: string;
   onConfirm: () => void;
@@ -13,7 +13,7 @@ interface ModalProps {
 const Modal = ({
   isOpen,
   onClose,
-  detail,
+  children,
   buttonConfirmText,
   buttonCancelText,
   onConfirm,
@@ -41,7 +41,7 @@ const Modal = ({
           <img src="/icons/icon-x.svg" alt="닫기" className="w-6 h-6" />
         </button>
 
-        <div id="modal-description">{detail}</div>
+        <div id="modal-description">{children}</div>
 
         <div className="flex justify-center gap-4 mt-4">
           <button
