@@ -10,14 +10,14 @@ interface LayoutProps {
 
 function Layout({ children }: LayoutProps) {
   const location = useLocation();
-  const isAuthPage =
-    location.pathname === '/sign-up' || location.pathname === '/sign-in';
-
+  const isNotNavPage = ['/sign-up', '/sign-in', '/'].includes(
+    location.pathname
+  );
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
       <main className="flex-1 flex flex-col">{children}</main>
-      {isAuthPage ? <Footer /> : <NavigationBar />}
+      {isNotNavPage ? <Footer /> : <NavigationBar />}
     </div>
   );
 }
