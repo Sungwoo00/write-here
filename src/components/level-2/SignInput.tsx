@@ -5,7 +5,8 @@ interface SignInputProps {
   type: 'id' | 'pw' | 'email';
   value: string;
   label: string;
-  error: string;
+  isValid?: boolean;
+  error?: string;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onClear: () => void;
 }
@@ -14,6 +15,7 @@ function SignInput({
   type,
   value,
   label,
+  isValid,
   error,
   onChange,
   onClear,
@@ -24,12 +26,12 @@ function SignInput({
   return (
     <div className="relative font-[HSSanTokki] text-sm lg:text-base">
       <div
-        className="w-full flex border-2 border-[var(--light-gray)] rounded-lg p-2
+        className="w-full flex border-2 border-[var(--light-gray)] rounded-lg p-2 lg:p-3
         hover:border-[var(--light-green)] focus-within:border-[var(--logo-green)] focus-within:hover:border-[var(--logo-green)]"
       >
         <input
           id={fieldId}
-          type={isVisible ? 'text' : 'password'}
+          type={type === 'id' ? 'text' : isVisible ? 'text' : 'password'}
           value={value}
           onChange={onChange}
           className=" w-full focus:outline-none text-[var(--dark-gray)]"
@@ -38,7 +40,7 @@ function SignInput({
         <label
           htmlFor={fieldId}
           className={tm(
-            'absolute left-2.5 top-2.5 transition-opacity text-[var(--light-gray)] align-middle',
+            'absolute left-2.5 top-2.5 lg:left-4 lg:top-3.5 transition-opacity text-[var(--light-gray)] align-middle',
             value ? 'opacity-0 -left-100' : 'opacity-100',
             'peer-placeholder-shown:opacity-100'
           )}
@@ -57,8 +59,8 @@ function SignInput({
                 <span
                   className="w-4 h-4 lg:w-6 lg:h-6 bg-[var(--light-gray)]"
                   style={{
-                    maskImage: `url(${isVisible ? '/icons/icon-eye-slash.svg' : '/icons/icon-eye-open.svg'})`,
-                    WebkitMaskImage: `url(${isVisible ? '/icons/icon-eye-slash.svg' : '/icons/icon-eye-open.svg'})`,
+                    maskImage: `url(${isVisible ? '/icons/icon-eye-open.svg' : '/icons/icon-eye-slash.svg'})`,
+                    WebkitMaskImage: `url(${isVisible ? '/icons/icon-eye-open.svg' : '/icons/icon-eye-slash.svg'})`,
                     maskSize: 'contain',
                     maskRepeat: 'no-repeat',
                     maskPosition: 'center',
@@ -66,6 +68,7 @@ function SignInput({
                 />
               </button>
             )}
+
             <button
               type="button"
               onClick={onClear}
@@ -85,7 +88,15 @@ function SignInput({
           </div>
         )}
       </div>
-      <div className="text-red-500 text-xs lg:text-sm mt-1">{error}</div>
+      <p
+        className={tm(
+          'text-xs lg:text-sm mt-1',
+          'absolute px-2',
+          isValid ? 'text-[var(--logo-green)]' : 'text-red-500'
+        )}
+      >
+        {error}
+      </p>
     </div>
   );
 }

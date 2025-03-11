@@ -1,23 +1,18 @@
-import '../styles/global.css';
+import { tm } from '@/utils/tw-merge';
 
-function SubmitButton({ disable = true }) {
+function SubmitButton({ label = '', disable = true }) {
   return (
     <button
       type="submit"
-      className={`
-        w-full 
-        h-9 
-        text-white 
-        font-[HSSanTokki] 
-        rounded-md 
-        ${!disable ? 'bg-[var(--logo-green)]' : 'bg-[var(--light-gray)]'} 
-        ${!disable ? 'cursor-pointer' : 'cursor-not-allowed'}
-        ${!disable ? 'hover:opacity-80' : ''}
-        text-base lg:text-[1.5rem]  
-      `}
+      className={tm(
+        'w-full h-9 lg:h-12 text-white font-[HSSanTokki] rounded-md text-base lg:text-lg',
+        disable
+          ? 'bg-[var(--light-gray)] cursor-not-allowed'
+          : 'bg-[var(--logo-green)] cursor-pointer hover:opacity-80'
+      )}
       disabled={disable}
     >
-      로그인
+      {label}
     </button>
   );
 }
