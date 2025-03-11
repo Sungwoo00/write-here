@@ -1,0 +1,47 @@
+@import 'tailwindcss';
+
+@layer theme {
+  :root {
+    --card-brown: #f1e9dd;
+    --card-blue: #eaf2f4;
+    --card-orange: #fff0e1;
+    --card-green: #eaf0e6;
+    --card-pink: #fff4f4;
+    --card-purple: #f8f3fe;
+    --card-gray: #e4e0e1;
+    --logo-green: #417b45;
+    --logo-dark-green: #39673d;
+    --light-beige: #fffcf6;
+    --icon-red: #fb4a4d;
+    --light-gray: #a8a8a8;
+    --light-green: #afc569;
+    --dark-gray: #6b7280;
+  }
+}
+
+@font-face {
+  font-family: 'HSSanTokki';
+  src: url('fonts/HSSanTokki2.0_2024.woff') format('woff');
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: 'Paperlogy';
+  src: url('fonts/Paperlogy-4Regular.woff') format('woff');
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: 'Paperlogy';
+  src: url('fonts/Paperlogy-6SemiBald.woff') format('woff');
+  font-weight: bold;
+}
+.mask-icon {
+  background-color: currentColor;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-size: contain;
+}
