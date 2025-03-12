@@ -7,7 +7,6 @@ interface ModalProps {
   buttonConfirmText: string;
   buttonCancelText: string;
   onConfirm: () => void;
-  onCancel: () => void;
 }
 
 const Modal = ({
@@ -17,7 +16,6 @@ const Modal = ({
   buttonConfirmText,
   buttonCancelText,
   onConfirm,
-  onCancel,
 }: ModalProps) => {
   if (!isOpen) return null;
 
@@ -34,7 +32,7 @@ const Modal = ({
       <section className="bg-white rounded-lg shadow-lg w-full max-w-md p-6 relative">
         <button
           type="button"
-          onClick={onClose}
+          onClick={onClose} 
           aria-label="모달 닫기"
           className="absolute top-3 right-3 text-[var(--dark-gray)]"
         >
@@ -46,14 +44,17 @@ const Modal = ({
         <div className="flex justify-center gap-4 mt-4">
           <button
             type="button"
-            onClick={onConfirm}
+            onClick={() => {
+              onConfirm();
+              onClose(); 
+            }}
             className="px-4 py-2 bg-[var(--logo-green)] text-white rounded-md hover:bg-[var(--logo-dark-green)]"
           >
             {buttonConfirmText}
           </button>
           <button
             type="button"
-            onClick={onCancel}
+            onClick={onClose} 
             className={tm(
               'px-4 py-2 bg-[var(--dark-gray)] text-white rounded-md',
               'hover:bg-[var(--light-gray)]'
