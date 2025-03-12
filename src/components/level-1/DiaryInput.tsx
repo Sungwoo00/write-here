@@ -19,7 +19,7 @@ function DiaryInput({ text, label, type, onChange }: DiaryInpuProps) {
       <label
         htmlFor={fieldId}
         className={tm(
-          'text-[var(--light-gray)] transition-opacity duration-100 absolute w-full min-h-52',
+          'text-[var(--light-gray)] transition-opacity duration-100 absolute w-full',
           hideLabel ? 'opacity-0' : 'opacity-100'
         )}
       >
@@ -28,14 +28,14 @@ function DiaryInput({ text, label, type, onChange }: DiaryInpuProps) {
       {type === 'textarea' ? (
         <textarea
           id={fieldId}
-          className="bg-transparent border rounded-sm border-solid border-[var(--logo-green)] resize-none"
+          className="bg-transparent border rounded-sm border-solid border-[var(--logo-green)] resize-none w-full h-full "
           value={text}
           onChange={onChange}
         />
       ) : (
         <input
           id={fieldId}
-          className="bg-transparent w-full border-b border-solid border-[var(--logo-green)] "
+          className="bg-transparent w-full border-b border-solid border-[var(--logo-green)]"
           value={text}
           onChange={onChange}
         />
