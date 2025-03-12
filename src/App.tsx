@@ -11,6 +11,7 @@ import Profile from './pages/profile';
 import PublicDiary from './pages/public-diary';
 import WriteHereMaP from './pages/write-here-map';
 import DiaryCalendar from './pages/calendar';
+import GoodBye from './pages/good-bye';
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
           <Route path="/public-diary" element={<PublicDiary />} />
           <Route path="/write-here-map" element={<WriteHereMaP />} />
           <Route path="/diary-calendar" element={<DiaryCalendar />} />
+          <Route path="/good-bye" element={<GoodBye />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Layout>
