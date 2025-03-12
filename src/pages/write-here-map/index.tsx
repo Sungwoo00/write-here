@@ -1,5 +1,11 @@
-function WriteHereMaP() {
-  return <div className="flex-grow"></div>;
+import MapContainer from '@/components/level-2/MapContainer';
+
+function WriteHereMap() {
+  return (
+    <div className="flex-grow">
+      <MapContainer />
+    </div>
+  );
 }
 
-export default WriteHereMaP;
+export default WriteHereMap;

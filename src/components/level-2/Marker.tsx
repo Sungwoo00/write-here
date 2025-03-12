@@ -1,13 +1,12 @@
 import { useEffect, useState } from 'react';
+import { useMapStore } from '@/store/Map';
 
-// ✅ 마커 아이콘
 const MARKER_SVG_PATH = '/icons/icon-location-pin-underbar.svg';
 
 interface MarkerProps {
   map: any;
   latitude: number;
   longitude: number;
-  setAddress?: (address: string) => void; // ✅ 선택적 사용으로 변경
   setMarker: (marker: any) => void;
 }
 
@@ -15,15 +14,15 @@ export const Marker = ({
   map,
   latitude,
   longitude,
-  setAddress,
   setMarker,
 }: MarkerProps) => {
   const [marker, updateMarker] = useState<any>(null);
+  const [infowindow, setInfowindow] = useState<any>(null); // ✅ 인포윈도우 상태 추가
 
   useEffect(() => {
     if (!map) return;
 
-    const kakao = (window as any).kakao; // ✅ `kakao` 객체 선언 추가
+    const kakao = (window as any).kakao;
     const position = new kakao.maps.LatLng(latitude, longitude);
     const imageSize = new kakao.maps.Size(40, 40);
     const markerImage = new kakao.maps.MarkerImage(MARKER_SVG_PATH, imageSize);
@@ -35,30 +34,56 @@ export const Marker = ({
     });
 
     updateMarker(newMarker);
-    setMarker(newMarker); // ✅ 부모 컴포넌트에 마커 전달
+    setMarker(newMarker); // 부모 컴포넌트에 마커 전달
 
-    if (setAddress) {
+    // 인포윈도우 생성
+    const newInfowindow = new kakao.maps.InfoWindow({ zIndex: 1 });
+    setInfowindow(newInfowindow);
+
+    return () => {
+      newMarker.setMap(null);
+      newInfowindow.close();
+    };
+  }, [map]);
+
+  // 마커 이동 시 인포윈도우 업데이트
+  useEffect(() => {
+    if (marker && infowindow) {
+      const kakao = (window as any).kakao;
+      const newPosition = new kakao.maps.LatLng(latitude, longitude);
+      marker.setPosition(newPosition);
+
+      // 클릭한 위치의 주소 변환하여 마커 위에 한 줄로 표시
       const geocoder = new kakao.maps.services.Geocoder();
       geocoder.coord2Address(
         longitude,
         latitude,
         (result: any, status: any) => {
           if (status === kakao.maps.services.Status.OK) {
-            setAddress(result[0].address.address_name);
+            const address = result[0].road_address
+              ? result[0].road_address.address_name
+              : result[0].address.address_name;
+
+            // 한 줄로 표시하는 스타일 적용
+            const content = `
+            <div style="
+              padding: 5px;
+              font-size: 12px;
+              max-width: 200px;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              text-align: center;
+            ">
+              ${address}
+            </div>
+          `;
+
+            infowindow.setContent(content);
+            infowindow.open(map, marker);
           }
         }
       );
-    }
-
-    return () => newMarker.setMap(null); // ✅ 언마운트 시 마커 제거
-  }, [map]);
-
-  // ✅ 마커 위치가 변경되면 위치 업데이트
-  useEffect(() => {
-    if (marker) {
-      const kakao = (window as any).kakao; // ✅ `kakao` 객체 선언 추가
-      const newPosition = new kakao.maps.LatLng(latitude, longitude);
-      marker.setPosition(newPosition);
     }
   }, [latitude, longitude]);
 
