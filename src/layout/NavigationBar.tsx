@@ -30,9 +30,9 @@ const NavigationBar: React.FC = () => {
   return (
     <nav
       className={tm(
-        'fixed bg-white border-black/20 flex items-center justify-around',
+        'fixed bg-white border-1 border-black/20 flex items-center justify-around',
         'bottom-0 w-full h-[4rem] min-w-0',
-        'md:top-[8.625rem] md:left-[2.4375rem] md:w-[3.5rem] md:h-[22.5rem] md:flex-col md:shadow-lg md:rounded-xl md:gap-y-6'
+        'lg:top-[8.625rem] lg:left-[2.4375rem] lg:w-[4rem] lg:h-[23rem] lg:border-1 lg:flex-col lg:justify-center lg:shadow-xl lg:rounded-xl lg:gap-y-6'
       )}
     >
       {NAV_ITEMS.map((item) => {
@@ -61,9 +61,7 @@ const NavigationBar: React.FC = () => {
                 WebkitMaskImage: `url(${item.icon})`,
               }}
             ></span>
-            <span className="text-[0.875rem] whitespace-nowrap">
-              {item.label}
-            </span>
+            <span className="text-sm whitespace-nowrap">{item.label}</span>
           </button>
         );
       })}
