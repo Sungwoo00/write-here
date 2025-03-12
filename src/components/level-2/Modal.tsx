@@ -3,7 +3,7 @@ import { tm } from '@/utils/tw-merge';
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
-  detail: React.ReactNode;
+  children: React.ReactNode;
   buttonConfirmText: string;
   buttonCancelText: string;
   onConfirm: () => void;
@@ -12,7 +12,7 @@ interface ModalProps {
 const Modal = ({
   isOpen,
   onClose,
-  detail,
+  children,
   buttonConfirmText,
   buttonCancelText,
   onConfirm,
@@ -32,21 +32,21 @@ const Modal = ({
       <section className="bg-white rounded-lg shadow-lg w-full max-w-md p-6 relative">
         <button
           type="button"
-          onClick={onClose} 
+          onClick={onClose}
           aria-label="모달 닫기"
           className="absolute top-3 right-3 text-[var(--dark-gray)]"
         >
           <img src="/icons/icon-x.svg" alt="닫기" className="w-6 h-6" />
         </button>
 
-        <div id="modal-description">{detail}</div>
+        <div id="modal-description">{children}</div>
 
         <div className="flex justify-center gap-4 mt-4">
           <button
             type="button"
             onClick={() => {
               onConfirm();
-              onClose(); 
+              onClose();
             }}
             className="px-4 py-2 bg-[var(--logo-green)] text-white rounded-md hover:bg-[var(--logo-dark-green)]"
           >
@@ -54,7 +54,7 @@ const Modal = ({
           </button>
           <button
             type="button"
-            onClick={onClose} 
+            onClick={onClose}
             className={tm(
               'px-4 py-2 bg-[var(--dark-gray)] text-white rounded-md',
               'hover:bg-[var(--light-gray)]'

@@ -10,7 +10,7 @@ interface LayoutProps {
 
 function Layout({ children }: LayoutProps) {
   const location = useLocation();
-  const isNotNavPage = ['/sign-up', '/sign-in', '/'].includes(
+  const isNotNavPage = ['/sign-up', '/sign-in', '/good-bye', '/'].includes(
     location.pathname
   );
   return (
