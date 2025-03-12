@@ -28,7 +28,7 @@ function SignUp() {
     password: '',
     pwConfirm: '',
   });
-  const [isModalOpen, setModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMsg, setModalMsg] = useState('');
 
   const signUp = async () => {
@@ -36,12 +36,12 @@ function SignUp() {
     const { error } = await supabase.auth.signUp(inputValue);
     if (error) {
       setModalMsg(error.message);
-      setModalOpen(true);
+      setIsModalOpen(true);
       setIsSubmitting(false);
       return;
     }
     setModalMsg('회원가입이 완료되었습니다');
-    setModalOpen(true);
+    setIsModalOpen(true);
     setIsSubmitting(false);
   };
 
@@ -110,9 +110,24 @@ function SignUp() {
 
   const handleModalButtonClick = () => {
     if (modalMsg === '회원가입이 완료되었습니다') {
-      navigate('./sign-in');
+      navigate('/sign-in');
     }
-    setModalOpen(false);
+    setIsModalOpen(false);
+  };
+
+  const handleOnClear = (
+    s: 'email' | 'password' | 'pwConfirm' | 'nickname'
+  ) => {
+    if (s === 'nickname') {
+      setInputValue((prev) => ({ ...prev, nickname: '' }));
+      return;
+    }
+    setErrors((prev) => ({ ...prev, [s]: '' }));
+    setValidation((prev) => ({ ...prev, [s]: false }));
+    if (s === 'pwConfirm') {
+      setPwConfirmValue('');
+    }
+    setInputValue((prev) => ({ ...prev, [s]: '' }));
   };
 
   return (
@@ -131,38 +146,42 @@ function SignUp() {
         className="w-full max-w-200 flex flex-col gap-8 lg:gap-12"
       >
         <SignInput
-          type="id"
+          name="email"
+          type="email"
           value={inputValue.email}
           label="이메일 입력"
           error={errors.email}
           isValid={validation.email}
           onChange={handleEmailChange}
-          onClear={() => setInputValue((prev) => ({ ...prev, email: '' }))}
+          onClear={() => handleOnClear('email')}
         ></SignInput>
         <SignInput
-          type="pw"
+          name="password"
+          type="password"
           value={inputValue.password}
           label="비밀번호 입력"
           onChange={handlePasswordChange}
           error={errors.password}
           isValid={validation.password}
-          onClear={() => setInputValue((prev) => ({ ...prev, password: '' }))}
+          onClear={() => handleOnClear('password')}
         />
         <SignInput
-          type="pw"
+          name="passwordConfirm"
+          type="password"
           value={pwConfirmValue}
           label="비밀번호 확인"
           onChange={handlePwConfirmChange}
           error={errors.pwConfirm}
           isValid={validation.pwConfirm}
-          onClear={() => setPwConfirmValue('')}
+          onClear={() => handleOnClear('pwConfirm')}
         />
         <SignInput
-          type="id"
+          name="nickname"
+          type="text"
           value={inputValue.nickname}
           label="닉네임 입력"
           onChange={handleNickNameChange}
-          onClear={() => setInputValue((prev) => ({ ...prev, nickname: '' }))}
+          onClear={() => handleOnClear('nickname')}
         ></SignInput>
         <div className="flex flex-col gap-2 lg:gap-4 text-sm lg:text-base">
           <Checkbox
@@ -191,7 +210,6 @@ function SignUp() {
         buttonConfirmText="확인"
         buttonCancelText="닫기"
         onConfirm={handleModalButtonClick}
-        onCancel={handleModalButtonClick}
         onClose={handleModalButtonClick}
       >
         <p className="min-h-15 mt-2 text-[var(--dark-gray)] text-center">

@@ -1,16 +1,24 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import tm from '../../utils/tw-merge'; // 유틸에서 import
+import tm from '@/utils/tw-merge';
 
 const NAV_ITEMS = [
   {
     label: '여기적기',
     icon: '/icons/icon-nav-map.svg',
-    path: '/navigation-test',
+    path: '/write-here-map',
   },
   { label: '일기', icon: '/icons/icon-nav-book.svg', path: '/diary' },
-  { label: '캘린더', icon: '/icons/icon-nav-calendar.svg', path: '/calendar' },
-  { label: '공유일기', icon: '/icons/icon-nav-people.svg', path: '/shared' },
+  {
+    label: '캘린더',
+    icon: '/icons/icon-nav-calendar.svg',
+    path: '/diary-calendar',
+  },
+  {
+    label: '공유일기',
+    icon: '/icons/icon-nav-people.svg',
+    path: '/public-diary',
+  },
   { label: '프로필', icon: '/icons/icon-person.svg', path: '/profile' },
 ];
 
