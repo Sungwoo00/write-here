@@ -10,7 +10,7 @@ function LocationInfo() {
   // '도' 정보만 추출하는 함수
   const getProvinceName = (region: string | null) => {
     if (!region) return '선택된 지역 없음';
-    return region.split(' ')[0]; // 첫 번째 단어(예: 서울특별시, 경기도) 반환
+    return region.split(' ')[0]; // 첫 번째 단어(예: 서울특별시, 경기도) 반환 // 현재 도 정보를 가져 오지못하는 문제 발생(해결중)
   };
 
   // 좌표를 변환하여 주소 업데이트 (selectedLocation이 변경될 때마다 실행)
