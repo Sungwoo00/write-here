@@ -5,7 +5,7 @@ import { useMapStore } from '@/store/Map';
 // 현재 위치 아이콘 (public 폴더 사용)
 const LocationIcon = '/icons/icon-gps.svg';
 
-const MapContainer = () => {
+function MapContainer() {
   const {
     initialLocation,
     setInitialLocation,
@@ -18,10 +18,10 @@ const MapContainer = () => {
   const [map, setMap] = useState<any>(null);
   const [currentAddress, setCurrentAddress] = useState(''); // 현재 위치 주소 상태 추가
 
-  useEffect(() => {
+  useEffect(function () {
     const apiKey = import.meta.env.VITE_KAKAO_API_KEY;
     if (!apiKey) {
-      console.error(' 카카오 API 키가 없습니다.');
+      console.error('카카오 API 키가 없습니다.');
       return;
     }
 
@@ -29,7 +29,8 @@ const MapContainer = () => {
     script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${apiKey}&autoload=false&libraries=services`;
     script.async = true;
     document.head.appendChild(script);
-    script.onload = () => {
+
+    script.onload = function () {
       if (!(window as any).kakao || !(window as any).kakao.maps) {
         console.error(' Kakao Maps API가 로드되지 않았습니다.');
         return;
@@ -37,13 +38,13 @@ const MapContainer = () => {
 
       const kakao = (window as any).kakao;
 
-      // Kakao Maps API가 완전히 로드된 후 실행/ 지도 생성성
-      kakao.maps.load(() => {
+      // Kakao Maps API가 완전히 로드된 후 실행
+      kakao.maps.load(function () {
         console.log(' Kakao Maps API가 정상적으로 로드되었습니다!');
 
         const container = document.getElementById('map');
         if (!container) {
-          console.error(' 지도를 표시할 #map 요소가 없습니다.');
+          console.error('지도를 표시할 #map 요소가 없습니다.');
           return;
         }
 
@@ -57,67 +58,70 @@ const MapContainer = () => {
 
         // 최초 위치 저장 (한 번만 실행)
         if (!initialLocation) {
-          if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition((position) => {
-              const lat = position.coords.latitude;
-              const lon = position.coords.longitude;
-              setInitialLocation(lat, lon);
-              setCurrentLocation(lat, lon);
-            });
-          }
+          navigator.geolocation?.getCurrentPosition(function (position) {
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+            setInitialLocation(lat, lon);
+            setCurrentLocation(lat, lon);
+          });
         }
 
         // 지도 클릭 시 마커 이동
-        kakao.maps.event.addListener(newMap, 'click', (mouseEvent: any) => {
-          const latlng = mouseEvent.latLng;
-          setCurrentLocation(latlng.getLat(), latlng.getLng());
+        kakao.maps.event.addListener(
+          newMap,
+          'click',
+          function (mouseEvent: any) {
+            const latlng = mouseEvent.latLng;
+            setCurrentLocation(latlng.getLat(), latlng.getLng());
 
-          if (currentMarker) {
-            currentMarker.setPosition(latlng);
+            if (currentMarker) {
+              currentMarker.setPosition(latlng);
+            }
           }
-        });
+        );
       });
     };
 
-    return () => {
+    return function () {
       document.head.removeChild(script);
     };
   }, []);
 
-  //현재 위치 버튼 클릭 시 초기 위치로 이동하며 현재 주소 업데이트
-  const goToInitialLocation = () => {
-    if (initialLocation && map) {
-      const kakao = (window as any).kakao;
-      const locPosition = new kakao.maps.LatLng(
-        initialLocation.lat,
-        initialLocation.lon
-      );
-
-      setCurrentLocation(initialLocation.lat, initialLocation.lon);
-      map.setCenter(locPosition);
-
-      if (currentMarker) {
-        currentMarker.setPosition(locPosition);
-      }
-
-      // 현재 위치의 주소 변환 후 지도 하단에 표시
-      const geocoder = new kakao.maps.services.Geocoder();
-      geocoder.coord2Address(
-        initialLocation.lon,
-        initialLocation.lat,
-        (result: any, status: any) => {
-          if (status === kakao.maps.services.Status.OK) {
-            const address = result[0].road_address
-              ? result[0].road_address.address_name
-              : result[0].address.address_name;
-            setCurrentAddress(address);
-          }
-        }
-      );
-    } else {
-      alert(' 초기 위치 정보가 없습니다.');
+  // 현재 위치 버튼 클릭 시 초기 위치로 이동하며 현재 주소 업데이트
+  function goToInitialLocation() {
+    if (!initialLocation || !map) {
+      alert('초기 위치 정보가 없습니다.');
+      return;
     }
-  };
+
+    const kakao = (window as any).kakao;
+    const locPosition = new kakao.maps.LatLng(
+      initialLocation.lat,
+      initialLocation.lon
+    );
+
+    setCurrentLocation(initialLocation.lat, initialLocation.lon);
+    map.setCenter(locPosition);
+
+    if (currentMarker) {
+      currentMarker.setPosition(locPosition);
+    }
+
+    // 현재 위치의 주소 변환 후 지도 하단에 표시
+    const geocoder = new kakao.maps.services.Geocoder();
+    geocoder.coord2Address(
+      initialLocation.lon,
+      initialLocation.lat,
+      function (result: any, status: any) {
+        if (status === kakao.maps.services.Status.OK) {
+          const address = result[0].road_address
+            ? result[0].road_address.address_name
+            : result[0].address.address_name;
+          setCurrentAddress(address);
+        }
+      }
+    );
+  }
 
   return (
     <div
@@ -130,7 +134,7 @@ const MapContainer = () => {
         padding: '0 16px',
       }}
     >
-      {/*  지도 컨테이너 (중앙 배치 & 반응형 적용) */}
+      {/* 지도 컨테이너 (중앙 배치 & 반응형 적용) */}
       <div
         style={{
           position: 'relative',
@@ -210,6 +214,6 @@ const MapContainer = () => {
       </div>
     </div>
   );
-};
+}
 
 export default MapContainer;
