@@ -57,7 +57,7 @@ function MapContainer() {
                 const lon = position.coords.longitude;
                 setInitialLocation(lat, lon);
                 setCurrentLocation(lat, lon);
-                console.log(` 현재 위치 설정됨: 위도 ${lat}, 경도 ${lon}`);
+                // console.log(` 현재 위치 설정됨: 위도 ${lat}, 경도 ${lon}`);
               });
             }
           }
@@ -70,7 +70,7 @@ function MapContainer() {
 
             setSelectedLocation(lat, lon);
             setCurrentLocation(lat, lon);
-            console.log(` 선택한 위치: 위도 ${lat}, 경도 ${lon}`);
+            // console.log(` 선택한 위치: 위도 ${lat}, 경도 ${lon}`);
 
             if (currentMarker) {
               currentMarker.setPosition(latlng);
@@ -82,7 +82,7 @@ function MapContainer() {
                   ? result[0].road_address.address_name
                   : result[0].address.address_name;
                 setCurrentAddress(address);
-                console.log(` 변환된 주소: ${address}`);
+                //  console.log(` 변환된 주소: ${address}`);
               }
             });
           });
@@ -104,7 +104,7 @@ function MapContainer() {
         setCurrentLocation(lat, lon);
         setInitialLocation(lat, lon);
 
-        console.log(` 현재 위치 업데이트: 위도 ${lat}, 경도 ${lon}`);
+        // console.log(` 현재 위치 업데이트: 위도 ${lat}, 경도 ${lon}`);
 
         if (map) {
           const kakao = (window as any).kakao;

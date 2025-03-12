@@ -43,7 +43,6 @@ export const useMapStore = create<MapState>((set, get) => ({
 
   savedMarkers: [],
   addSavedMarker: (lat, lon, address) => {
-    console.log(` 마커 저장됨: 위도 ${lat}, 경도 ${lon}, 주소: ${address}`);
     set((state) => ({
       savedMarkers: [...state.savedMarkers, { lat, lon, address }],
     }));
