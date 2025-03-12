@@ -17,7 +17,7 @@ export const Marker = ({
   setMarker,
 }: MarkerProps) => {
   const [marker, updateMarker] = useState<any>(null);
-  const [infowindow, setInfowindow] = useState<any>(null); // ✅ 인포윈도우 상태 추가
+  const [infowindow, setInfowindow] = useState<any>(null); // 인포윈도우 상태 추가
 
   useEffect(() => {
     if (!map) return;

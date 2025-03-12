@@ -15,11 +15,11 @@ interface MapState {
 export const useMapStore = create<MapState>((set) => ({
   initialLocation: null,
   selectedLocation: null,
-  currentLat: 33.450701, // ✅ 기본값 설정
+  currentLat: 33.450701, // 초기 기본값 설정
   currentLon: 126.570667,
   currentMarker: null,
   setInitialLocation: (lat, lon) => set({ initialLocation: { lat, lon } }),
   setSelectedLocation: (lat, lon) => set({ selectedLocation: { lat, lon } }),
-  setCurrentLocation: (lat, lon) => set({ currentLat: lat, currentLon: lon }), // ✅ 현재 위치 업데이트 함수 추가
+  setCurrentLocation: (lat, lon) => set({ currentLat: lat, currentLon: lon }), // 현재 위치 업데이트 함수 추가
   setCurrentMarker: (marker) => set({ currentMarker: marker }),
 }));
