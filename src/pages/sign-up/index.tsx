@@ -7,6 +7,7 @@ import Modal from '@/components/level-2/Modal';
 import Checkbox from '@/components/level-1/Checkbox';
 import SubmitButton from '@/components/level-1/SubmitButton';
 import { Link, useNavigate } from 'react-router-dom';
+import { getErrorMessage } from '@/utils/auth';
 
 function SignUp() {
   const navigate = useNavigate();
@@ -35,7 +36,7 @@ function SignUp() {
     setIsSubmitting(true);
     const { error } = await supabase.auth.signUp(inputValue);
     if (error) {
-      setModalMsg(error.message);
+      setModalMsg(getErrorMessage(error.message));
       setIsModalOpen(true);
       setIsSubmitting(false);
       return;
@@ -146,7 +147,6 @@ function SignUp() {
         className="w-full max-w-200 flex flex-col gap-8 lg:gap-12"
       >
         <SignInput
-          name="email"
           type="email"
           value={inputValue.email}
           label="이메일 입력"
@@ -156,7 +156,6 @@ function SignUp() {
           onClear={() => handleOnClear('email')}
         ></SignInput>
         <SignInput
-          name="password"
           type="password"
           value={inputValue.password}
           label="비밀번호 입력"
@@ -166,7 +165,6 @@ function SignUp() {
           onClear={() => handleOnClear('password')}
         />
         <SignInput
-          name="passwordConfirm"
           type="password"
           value={pwConfirmValue}
           label="비밀번호 확인"
@@ -176,7 +174,6 @@ function SignUp() {
           onClear={() => handleOnClear('pwConfirm')}
         />
         <SignInput
-          name="nickname"
           type="text"
           value={inputValue.nickname}
           label="닉네임 입력"
