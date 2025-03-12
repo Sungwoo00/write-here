@@ -21,19 +21,19 @@
 
 @font-face {
   font-family: 'HSSanTokki';
-  src: url('fonts/HSSanTokki2.0_2024.woff') format('woff');
+  src: url('/fonts/HSSanTokki2.0_2024.woff') format('woff');
   font-weight: normal;
 }
 
 @font-face {
   font-family: 'Paperlogy';
-  src: url('fonts/Paperlogy-4Regular.woff') format('woff');
+  src: url('/fonts/Paperlogy-4Regular.woff') format('woff');
   font-weight: normal;
 }
 
 @font-face {
   font-family: 'Paperlogy';
-  src: url('fonts/Paperlogy-6SemiBald.woff') format('woff');
+  src: url('/fonts/Paperlogy-6SemiBald.woff') format('woff');
   font-weight: bold;
 }
 .mask-icon {
