@@ -10,9 +10,8 @@ function MapContainer() {
     setMap,
     setSelectedLocation,
     setSelectedRegion,
-    addRecord,
-    cacheRegion,
-    getCachedRegion,
+    addSavedMarker,
+    savedMarkers,
     initialLocation,
     setInitialLocation,
     currentLat,
@@ -50,6 +49,7 @@ function MapContainer() {
 
           const geocoder = new kakao.maps.services.Geocoder();
 
+          //  최초 로딩 시 현재 위치 가져오기
           if (!initialLocation) {
             if (navigator.geolocation) {
               navigator.geolocation.getCurrentPosition((position) => {
@@ -57,10 +57,12 @@ function MapContainer() {
                 const lon = position.coords.longitude;
                 setInitialLocation(lat, lon);
                 setCurrentLocation(lat, lon);
+                console.log(` 현재 위치 설정됨: 위도 ${lat}, 경도 ${lon}`);
               });
             }
           }
 
+          //  지도 클릭 시 위치 선택
           kakao.maps.event.addListener(newMap, 'click', (mouseEvent: any) => {
             const latlng = mouseEvent.latLng;
             const lat = latlng.getLat();
@@ -68,28 +70,19 @@ function MapContainer() {
 
             setSelectedLocation(lat, lon);
             setCurrentLocation(lat, lon);
+            console.log(` 선택한 위치: 위도 ${lat}, 경도 ${lon}`);
 
             if (currentMarker) {
               currentMarker.setPosition(latlng);
             }
 
-            const cachedRegion = getCachedRegion(lat, lon);
-            if (cachedRegion) {
-              setSelectedRegion(cachedRegion);
-              addRecord(cachedRegion);
-              return;
-            }
-
-            geocoder.coord2RegionCode(lon, lat, (result: any, status: any) => {
+            geocoder.coord2Address(lon, lat, (result: any, status: any) => {
               if (status === kakao.maps.services.Status.OK) {
-                const region = result.find(
-                  (r: any) => r.region_type === 'H'
-                )?.address_name;
-                if (region) {
-                  setSelectedRegion(region);
-                  addRecord(region);
-                  cacheRegion(lat, lon, region);
-                }
+                const address = result[0].road_address
+                  ? result[0].road_address.address_name
+                  : result[0].address.address_name;
+                setCurrentAddress(address);
+                console.log(` 변환된 주소: ${address}`);
               }
             });
           });
@@ -100,38 +93,30 @@ function MapContainer() {
         document.head.removeChild(script);
       };
     }
-  }, [map, setMap, setSelectedLocation, setSelectedRegion]);
+  }, [map]);
 
-  const goToInitialLocation = () => {
-    if (initialLocation && map) {
-      const kakao = (window as any).kakao;
-      const locPosition = new kakao.maps.LatLng(
-        initialLocation.lat,
-        initialLocation.lon
-      );
+  //  현재 위치 버튼 클릭 시 실행
+  const goToCurrentLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+        setCurrentLocation(lat, lon);
+        setInitialLocation(lat, lon);
 
-      setCurrentLocation(initialLocation.lat, initialLocation.lon);
-      map.setCenter(locPosition);
+        console.log(` 현재 위치 업데이트: 위도 ${lat}, 경도 ${lon}`);
 
-      if (currentMarker) {
-        currentMarker.setPosition(locPosition);
-      }
-
-      const geocoder = new kakao.maps.services.Geocoder();
-      geocoder.coord2Address(
-        initialLocation.lon,
-        initialLocation.lat,
-        (result: any, status: any) => {
-          if (status === kakao.maps.services.Status.OK) {
-            const address = result[0].road_address
-              ? result[0].road_address.address_name
-              : result[0].address.address_name;
-            setCurrentAddress(address);
+        if (map) {
+          const kakao = (window as any).kakao;
+          const locPosition = new kakao.maps.LatLng(lat, lon);
+          map.setCenter(locPosition);
+          if (currentMarker) {
+            currentMarker.setPosition(locPosition);
           }
         }
-      );
+      });
     } else {
-      alert(' 초기 위치 정보가 없습니다.');
+      alert('현재 위치를 가져올 수 없습니다.');
     }
   };
 
@@ -142,19 +127,16 @@ function MapContainer() {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        height: '100vh',
         width: '100%',
-        maxWidth: '1200px',
+        maxWidth: '1400px',
         padding: '0 16px',
       }}
     >
-      {/* ✅ 지도 컨테이너 (반응형 적용) */}
       <div
         style={{
           position: 'relative',
           width: '100%',
-          height: '600px', // ✅ 높이 조정
-          maxWidth: '1200px', // ✅ 가로폭 확장
+          height: '700px',
         }}
       >
         <div
@@ -167,9 +149,9 @@ function MapContainer() {
           }}
         ></div>
 
-        {/* ✅ 현재 위치 버튼 (왼쪽 하단) */}
+        {/*  현재 위치 버튼 */}
         <button
-          onClick={goToInitialLocation}
+          onClick={goToCurrentLocation}
           style={{
             position: 'absolute',
             bottom: '30px',
@@ -194,37 +176,40 @@ function MapContainer() {
           />
         </button>
 
-        {/* ✅ 마커 */}
-        {map && (
-          <Marker
-            map={map}
-            latitude={currentLat}
-            longitude={currentLon}
-            setMarker={setCurrentMarker}
-          />
-        )}
-      </div>
+        {/*  마커 저장 버튼 */}
+        <button
+          onClick={() => {
+            if (currentAddress) {
+              addSavedMarker(currentLat, currentLon, currentAddress);
+            }
+          }}
+          style={{
+            marginTop: '10px',
+            padding: '8px 12px',
+            background: '#4CAF50',
+            color: 'white',
+            borderRadius: '5px',
+            cursor: 'pointer',
+          }}
+        >
+          마커 저장
+        </button>
 
-      {/* ✅ 현재 주소 표시 (지도 아래) */}
-      <div
-        style={{
-          marginTop: '20px',
-          fontSize: '14px',
-          fontWeight: 'bold',
-          textAlign: 'center',
-          display: 'flex',
-          alignItems: 'center',
-          width: '100%',
-          maxWidth: '1200px',
-          justifyContent: 'center',
-        }}
-      >
-        <img
-          src={LocationIcon}
-          alt="위치 아이콘"
-          style={{ width: '18px', height: '18px', marginRight: '5px' }}
-        />
-        <p>현재 주소: {currentAddress}</p>
+        {/*  선택한 위치 마커 */}
+        {map && (
+          <Marker map={map} latitude={currentLat} longitude={currentLon} />
+        )}
+
+        {/* 저장된 마커들 표시 */}
+        {map &&
+          savedMarkers.map((marker, index) => (
+            <Marker
+              key={index}
+              map={map}
+              latitude={marker.lat}
+              longitude={marker.lon}
+            />
+          ))}
       </div>
     </div>
   );
