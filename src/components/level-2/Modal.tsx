@@ -25,7 +25,7 @@ const Modal = ({
       aria-modal="true"
       aria-describedby="modal-description"
       className={tm(
-        'fixed inset-0 flex items-center font-[Paperlogy] justify-center transition-opacity duration-300 z-50 before:absolute before:inset-0 before:bg-[var(--light-gray)]',
+        'fixed inset-0 flex items-center font-[Paperlogy] justify-center transition-opacity duration-300 z-200 before:absolute before:inset-0 before:bg-[var(--light-gray)]',
         isOpen ? 'before:opacity-50' : 'before:opacity-0'
       )}
     >

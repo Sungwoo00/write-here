@@ -30,9 +30,9 @@ const NavigationBar: React.FC = () => {
   return (
     <nav
       className={tm(
-        'fixed bg-white border-1 border-black/20 flex items-center justify-around',
+        'fixed bg-white border-1 border-black/20 flex items-center justify-around z-50',
         'bottom-0 w-full h-[4rem] min-w-0',
-        'lg:top-[8.625rem] lg:left-[2.4375rem] lg:w-[4rem] lg:h-[23rem] lg:border-1 lg:flex-col lg:justify-center lg:shadow-xl lg:rounded-xl lg:gap-y-6'
+        'lg:top-[8.625rem] lg:left-[2.4375rem] lg:w-[4rem] lg:h-[23rem] lg:flex-col lg:justify-center lg:shadow-xl lg:rounded-xl lg:gap-y-6'
       )}
     >
       {NAV_ITEMS.map((item) => {
