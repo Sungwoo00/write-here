@@ -9,7 +9,7 @@ function MapContainer() {
     map,
     setMap,
     setSelectedLocation,
-    setSelectedRegion,
+    //setSelectedRegion,
     addSavedMarker,
     savedMarkers,
     initialLocation,
@@ -18,7 +18,7 @@ function MapContainer() {
     currentLon,
     setCurrentLocation,
     currentMarker,
-    setCurrentMarker,
+    //setCurrentMarker,
   } = useMapStore();
 
   const [currentAddress, setCurrentAddress] = useState('');
@@ -180,7 +180,7 @@ function MapContainer() {
         <button
           onClick={() => {
             if (currentAddress) {
-              addSavedMarker(currentLat, currentLon, currentAddress);
+              addSavedMarker(currentLat, currentLon, currentAddress, '');
             }
           }}
           style={{

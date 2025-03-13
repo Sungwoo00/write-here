@@ -1,11 +1,7 @@
-import DiaryCalendar from '@/pages/calendar';
 import DiaryPlaceTypeSelector from '../level-2/DiaryPlaceTypeSelector';
-import RendererSpring from '../level-2/RendererSpring';
-import LikeCounter from '../level-2/LikeCounter';
 import DiaryInput from '../level-1/DiaryInput';
 import { useState } from 'react';
 import DiaryDateSelector from '../level-2/DiaryDateSelector';
-import Tag from '../level-1/Tag';
 import SubmitButton from '../level-1/SubmitButton';
 
 function DiaryRegister() {

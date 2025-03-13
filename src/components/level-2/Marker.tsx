@@ -9,7 +9,9 @@ interface MarkerProps {
 }
 
 export const Marker = ({ map, latitude, longitude }: MarkerProps) => {
-  // const [marker, setLocalMarker] = useState<any>(null);
+
+  //const [marker, setLocalMarker] = useState<any>(null);
+
 
   useEffect(() => {
     if (!map) return;
@@ -24,6 +26,7 @@ export const Marker = ({ map, latitude, longitude }: MarkerProps) => {
       image: markerImage,
       map,
     });
+
 
     // setLocalMarker(newMarker);
 
