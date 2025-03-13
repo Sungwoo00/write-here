@@ -1,7 +1,8 @@
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
 function Landing() {
+  const navigate = useNavigate();
   return (
     <div className="relative flex flex-grow flex-col items-center justify-center font-[HSSanTokki] bg-[var(--light-beige)]">
       <div className="gap-[25px] flex flex-grow flex-col items-center justify-center">
@@ -14,16 +15,14 @@ function Landing() {
         <h6 className="text-xs md:text-sm text-[var(--dark-gray)]">
           특별한 순간들을 기록하고 공유하세요
         </h6>
-        <Link to="/sign-in">
-          <button
-            type="button"
-            className="bg-[var(--logo-green)] text-xs md:text-sm text-white px-[23px] py-[9px] rounded-xl"
-          >
-            여행 시작하기
-          </button>
-        </Link>
+        <button
+          type="button"
+          className="bg-[var(--logo-green)] text-xs md:text-sm text-white px-[23px] py-[9px] rounded-xl cursor-pointer hover:opacity-80 z-50 active:bg-[var(--logo-dark-green)]"
+          onClick={() => navigate('/sign-in')}
+        >
+          여행 시작하기
+        </button>
       </div>
-
       <DotLottieReact
         src="/animations/location-ping.json"
         loop
