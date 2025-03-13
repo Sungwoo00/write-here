@@ -6,7 +6,6 @@ import SignIn from './pages/sign-in';
 import SignUp from './pages/sign-up';
 import Diary from './pages/diary';
 import DiaryDetail from './pages/diary-detail';
-import DiaryRegister from './pages/diary-register';
 import Profile from './pages/profile';
 import PublicDiary from './pages/public-diary';
 import WriteHereMaP from './pages/write-here-map';
@@ -24,7 +23,7 @@ function App() {
           <Route path="/diary" element={<Diary />} />
           <Route path="/landing" element={<Landing />} />
           <Route path="/diary-detail" element={<DiaryDetail />} />
-          <Route path="/diary-register" element={<DiaryRegister />} />
+          {/* <Route path="/diary-register" element={<DiaryRegister />} /> */}
           <Route path="/profile" element={<Profile />} />
           <Route path="/public-diary" element={<PublicDiary />} />
           <Route path="/write-here-map" element={<WriteHereMaP />} />
