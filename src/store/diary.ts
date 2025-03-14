@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist, PersistOptions } from 'zustand/middleware';
 
-const DUMMY_DIARY_VERSION = '1.0'; 
+const DUMMY_DIARY_VERSION = '1.0';
 
 interface DiaryEntry {
   title: string;

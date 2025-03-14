@@ -15,7 +15,7 @@ const DiaryCard = ({ title }: DiaryCardProps) => {
   );
 
   const toggleLike = useDiaryStore((state) => state.toggleLike);
-  const [isLiked, setIsLiked] = useState(false); 
+  const [isLiked, setIsLiked] = useState(false);
 
   if (!diary) return null;
 
@@ -29,7 +29,7 @@ const DiaryCard = ({ title }: DiaryCardProps) => {
 
   const handleLikeToggle = () => {
     setIsLiked((prev) => !prev);
-    toggleLike(diary.title); 
+    toggleLike(diary.title);
   };
 
   return (
