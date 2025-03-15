@@ -2,6 +2,7 @@ import Modal from '@/components/level-2/Modal';
 import supabase from '@/utils/supabase';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import ProfileStatus from './../../components/level-2/ProfileStatus';
 
 function Profile() {
   const navigate = useNavigate();
@@ -42,33 +43,36 @@ function Profile() {
   };
 
   return (
-    <div className="flex-grow flex flex-col font-[HSSanTokki]">
-      <button
-        type="button"
-        className="text-[var(--icon-red)] hover:underline cursor-pointer"
-        onClick={handleSignOutClick}
-      >
-        로그아웃
-      </button>
-      <button
-        type="button"
-        className="text-[var(--icon-red)] hover:underline cursor-pointer"
-        onClick={handleDeleteUserClick}
-      >
-        회원탈퇴
-      </button>
-      <Modal
-        isOpen={isModalOpen}
-        buttonConfirmText="확인"
-        buttonCancelText="취소"
-        onConfirm={onConfirm}
-        onClose={() => setIsModalOpen(false)}
-      >
-        <p className="min-h-15 mt-2 text-[var(--dark-gray)] text-center">
-          {modalMsg}
-        </p>
-      </Modal>
-    </div>
+      <>
+        <ProfileStatus/>
+        <div className="flex-grow flex flex-col font-[HSSanTokki]">
+          <button
+            type="button"
+            className="text-[var(--icon-red)] hover:underline cursor-pointer"
+            onClick={handleSignOutClick}
+          >
+            로그아웃
+          </button>
+          <button
+            type="button"
+            className="text-[var(--icon-red)] hover:underline cursor-pointer"
+            onClick={handleDeleteUserClick}
+          >
+            회원탈퇴
+          </button>
+          <Modal
+            isOpen={isModalOpen}
+            buttonConfirmText="확인"
+            buttonCancelText="취소"
+            onConfirm={onConfirm}
+            onClose={() => setIsModalOpen(false)}
+          >
+            <p className="min-h-15 mt-2 text-[var(--dark-gray)] text-center">
+              {modalMsg}
+            </p>
+          </Modal>
+        </div>
+      </>
   );
 }
 
