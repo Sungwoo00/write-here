@@ -2,7 +2,11 @@ import { useState } from 'react';
 import { tm } from '@/utils/tw-merge';
 import React from 'react';
 
-function DiaryPlaceTypeSelector() {
+interface DiaryPlaceTypeSelectorProps {
+  onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+}
+
+function DiaryPlaceTypeSelector({ onChange }: DiaryPlaceTypeSelectorProps) {
   const [selectedPlace, setSelectedPlace] = useState('');
 
   const getColorClass = () => {
@@ -28,13 +32,17 @@ function DiaryPlaceTypeSelector() {
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedPlace(e.target.value);
+
+    if (onChange) {
+      onChange(e);
+    }
   };
 
   return (
     <label
       htmlFor="underline_select"
       className={tm(
-        'flex items-center p-2 text-xs border-b-2 border-gray-200 dark:border-gray-700 cursor-pointer',
+        'flex items-center pt-2 pb-2 text-xs border-b-1 border-[var(--logo-green)] dark:border-gray-700 cursor-pointer',
         'lg:text-base',
         getColorClass()
       )}
