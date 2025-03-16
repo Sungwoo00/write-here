@@ -49,7 +49,7 @@ const DiaryCard = ({ title }: DiaryCardProps) => {
 
       <div
         className={tm(
-          'w-[366px] h-[120px] lg:h-[138px] lg:w-[370px] p-3 overflow-hidden bg-[var(--card-brown)]'
+          'w-[366px] h-[120px] lg:h-[138px] lg:w-[370px] p-3 overflow-hidden bg-[var(--card-brown)] flex flex-col justify-between'
         )}
       >
         <div className="flex justify-between items-center w-full">
@@ -65,7 +65,7 @@ const DiaryCard = ({ title }: DiaryCardProps) => {
           {diary.content}
         </p>
 
-        <div className="flex flex-wrap gap-2 mt-3 lg:mt-1 overflow-hidden font-[HSSanTokki]">
+        <div className="flex flex-wrap gap-2 mt-auto overflow-hidden font-[HSSanTokki]">
           {diary.tag.map((tag, index) => (
             <Tag key={index} tagText={tag} />
           ))}
