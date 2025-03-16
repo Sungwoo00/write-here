@@ -65,7 +65,7 @@ const DiaryCard = ({ title }: DiaryCardProps) => {
           {diary.content}
         </p>
 
-        <div className="flex flex-wrap gap-2 mt-3 overflow-hidden font-[HSSanTokki]">
+        <div className="flex flex-wrap gap-2 mt-3 lg:mt-1 overflow-hidden font-[HSSanTokki]">
           {diary.tag.map((tag, index) => (
             <Tag key={index} tagText={tag} />
           ))}
