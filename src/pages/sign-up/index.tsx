@@ -33,8 +33,15 @@ function SignUp() {
   const [modalMsg, setModalMsg] = useState('');
 
   const signUp = async () => {
+    const { email, password, nickname } = inputValue;
     setIsSubmitting(true);
-    const { error } = await supabase.auth.signUp(inputValue);
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { nickname },
+      },
+    });
     if (error) {
       setModalMsg(getErrorMessage(error.message));
       setIsModalOpen(true);
@@ -46,6 +53,7 @@ function SignUp() {
     setIsSubmitting(false);
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedValidateEmail = useCallback(
     debounce((value: string) => {
       const isValid = isValidEmail(value);
@@ -58,6 +66,7 @@ function SignUp() {
     []
   );
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedValidatePassword = useCallback(
     debounce((value: string) => {
       const isValid = isValidPw(value);
