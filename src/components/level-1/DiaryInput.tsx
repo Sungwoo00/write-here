@@ -15,12 +15,12 @@ function DiaryInput({ text, label, type, onChange }: DiaryInpuProps) {
   const hideLabel = text.length > 0;
 
   return (
-    <li className="list-none w-full p-2">
+    <li className="list-none w-full pt-2 pb-2">
       <label
         htmlFor={fieldId}
         className={tm(
-          'text-[var(--light-gray)] transition-opacity duration-100 absolute w-full',
-          hideLabel ? 'opacity-0' : 'opacity-100'
+          'text-[var(--light-gray)] transition-opacity duration-100 absolute w-fit',
+          hideLabel ? 'opacity-0' : 'opacity-100 pl-1'
         )}
       >
         {label}
