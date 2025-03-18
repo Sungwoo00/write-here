@@ -129,7 +129,17 @@ function MapContainer() {
         document.head.removeChild(script);
       };
     }
-  }, [map]);
+  }, [
+    map,
+    currentLat,
+    currentLon,
+    currentMarker,
+    initialLocation,
+    setCurrentLocation,
+    setInitialLocation,
+    setMap,
+    setSelectedLocation,
+  ]);
 
   //  현재 위치 버튼 클릭 시 실행
   const goToCurrentLocation = () => {
