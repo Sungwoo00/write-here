@@ -43,8 +43,10 @@ function SignInput({
         <label
           htmlFor={fieldId}
           className={tm(
-            'absolute left-2.5 top-2.5 lg:left-4 lg:top-3.5 transition-opacity text-[var(--light-gray)] align-middle',
-            value ? 'opacity-0 -left-100' : 'opacity-100',
+            'absolute text-[var(--light-gray)] align-middle',
+            value
+              ? 'opacity-0 -left-100'
+              : 'opacity-100 left-2.5 top-2.5 lg:left-4 lg:top-3.5',
             'peer-placeholder-shown:opacity-100'
           )}
         >
