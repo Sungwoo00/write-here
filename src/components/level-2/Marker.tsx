@@ -3,20 +3,18 @@ import { useEffect } from 'react';
 const MARKER_SVG_PATH = '/icons/icon-location-pin-underbar.svg';
 
 interface MarkerProps {
-  map: any;
+  map: kakao.maps.Map | kakao.maps.Roadview | undefined;
   latitude: number;
   longitude: number;
 }
 
 export const Marker = ({ map, latitude, longitude }: MarkerProps) => {
-
   //const [marker, setLocalMarker] = useState<any>(null);
-
 
   useEffect(() => {
     if (!map) return;
 
-    const kakao = (window as any).kakao;
+    const kakao = window.kakao;
     const position = new kakao.maps.LatLng(latitude, longitude);
     const imageSize = new kakao.maps.Size(40, 40);
     const markerImage = new kakao.maps.MarkerImage(MARKER_SVG_PATH, imageSize);
@@ -26,7 +24,6 @@ export const Marker = ({ map, latitude, longitude }: MarkerProps) => {
       image: markerImage,
       map,
     });
-
 
     // setLocalMarker(newMarker);
 

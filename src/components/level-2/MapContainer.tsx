@@ -19,7 +19,29 @@ function MapContainer() {
     setCurrentLocation,
     currentMarker,
     //setCurrentMarker,
-  } = useMapStore();
+  } = useMapStore() as {
+    map: kakao.maps.Map | null;
+    setMap: (map: kakao.maps.Map) => void;
+    setSelectedLocation: (lat: number, lon: number) => void;
+    addSavedMarker: (
+      lat: number,
+      lon: number,
+      address: string,
+      description: string
+    ) => void;
+    savedMarkers: {
+      lat: number;
+      lon: number;
+      address: string;
+      region: string;
+    }[];
+    initialLocation: [number, number] | null;
+    setInitialLocation: (lat: number, lon: number) => void;
+    currentLat: number;
+    currentLon: number;
+    setCurrentLocation: (lat: number, lon: number) => void;
+    currentMarker: kakao.maps.Marker | null;
+  };
 
   const [currentAddress, setCurrentAddress] = useState('');
 
@@ -34,7 +56,7 @@ function MapContainer() {
       document.head.appendChild(script);
 
       script.onload = () => {
-        const kakao = (window as any).kakao;
+        const kakao = window.kakao;
         kakao.maps.load(() => {
           const container = document.getElementById('map');
           if (!container) return;
@@ -63,29 +85,43 @@ function MapContainer() {
           }
 
           //  지도 클릭 시 위치 선택
-          kakao.maps.event.addListener(newMap, 'click', (mouseEvent: any) => {
-            const latlng = mouseEvent.latLng;
-            const lat = latlng.getLat();
-            const lon = latlng.getLng();
+          kakao.maps.event.addListener(
+            newMap,
+            'click',
+            (mouseEvent: kakao.maps.event.MouseEvent) => {
+              const latlng = mouseEvent.latLng;
+              const lat = latlng.getLat();
+              const lon = latlng.getLng();
 
-            setSelectedLocation(lat, lon);
-            setCurrentLocation(lat, lon);
-            // console.log(` 선택한 위치: 위도 ${lat}, 경도 ${lon}`);
+              setSelectedLocation(lat, lon);
+              setCurrentLocation(lat, lon);
+              // console.log(` 선택한 위치: 위도 ${lat}, 경도 ${lon}`);
 
-            if (currentMarker) {
-              currentMarker.setPosition(latlng);
-            }
-
-            geocoder.coord2Address(lon, lat, (result: any, status: any) => {
-              if (status === kakao.maps.services.Status.OK) {
-                const address = result[0].road_address
-                  ? result[0].road_address.address_name
-                  : result[0].address.address_name;
-                setCurrentAddress(address);
-                //  console.log(` 변환된 주소: ${address}`);
+              if (currentMarker) {
+                currentMarker.setPosition(latlng);
               }
-            });
-          });
+
+              geocoder.coord2Address(
+                lon,
+                lat,
+                (
+                  result: {
+                    address: kakao.maps.services.Address;
+                    road_address: kakao.maps.services.RoadAaddress | null;
+                  }[],
+                  status: kakao.maps.services.Status
+                ) => {
+                  if (status === kakao.maps.services.Status.OK) {
+                    const address = result[0].road_address
+                      ? result[0].road_address.address_name
+                      : result[0].address.address_name;
+                    setCurrentAddress(address);
+                    //  console.log(` 변환된 주소: ${address}`);
+                  }
+                }
+              );
+            }
+          );
         });
       };
 
@@ -107,7 +143,7 @@ function MapContainer() {
         // console.log(` 현재 위치 업데이트: 위도 ${lat}, 경도 ${lon}`);
 
         if (map) {
-          const kakao = (window as any).kakao;
+          const kakao = window.kakao;
           const locPosition = new kakao.maps.LatLng(lat, lon);
           map.setCenter(locPosition);
           if (currentMarker) {
