@@ -40,3 +40,6 @@ Thumbs.db
 
 # 네비게이션 테스트 페이지 제외
 src/pages/navigation-test/
+
+# 외부 api 제와
+src/types/types-git.ignore/
