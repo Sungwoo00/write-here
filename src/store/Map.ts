@@ -1,8 +1,8 @@
 import { create } from 'zustand';
 
 interface MapState {
-  map: any | null;
-  setMap: (mapInstance: any) => void;
+  map: unknown | null;
+  setMap: (mapInstance: unknown) => void;
 
   initialLocation: { lat: number; lon: number } | null;
   setInitialLocation: (lat: number, lon: number) => void;
@@ -26,8 +26,8 @@ interface MapState {
     region: string
   ) => void;
 
-  currentMarker: any | null;
-  setCurrentMarker: (markerInstance: any) => void;
+  currentMarker: unknown | null;
+  setCurrentMarker: (markerInstance: unknown) => void;
 }
 
 export const useMapStore = create<MapState>((set, get) => ({

@@ -20,17 +20,21 @@ function LocationInfo() {
       return;
     }
 
-    const kakao = (window as any).kakao;
+    const kakao = window.kakao;
     const geocoder = new kakao.maps.services.Geocoder();
 
     geocoder.coord2Address(
       selectedLocation.lon,
       selectedLocation.lat,
-      (result: any, status: any) => {
+      (result: unknown, status: unknown) => {
         if (status === kakao.maps.services.Status.OK) {
-          const address = result[0].road_address
-            ? result[0].road_address.address_name
-            : result[0].address.address_name;
+          const res = result as {
+            road_address?: { address_name: string };
+            address: { address_name: string };
+          }[];
+          const address = res[0].road_address
+            ? res[0].road_address.address_name
+            : res[0].address.address_name;
           setSelectedAddress(address);
         }
       }
@@ -53,7 +57,7 @@ function LocationInfo() {
         지도 정보
       </h3>
 
-      {/*  현재 위치 표시 */}
+      {/* 현재 위치 표시 */}
       {initialLocation ? (
         <p>
           현재 위치: 위도 {initialLocation.lat}, 경도 {initialLocation.lon}
@@ -62,7 +66,7 @@ function LocationInfo() {
         <p> 현재 위치 정보 없음</p>
       )}
 
-      {/*  선택한 위치 표시 */}
+      {/* 선택한 위치 표시 */}
       {selectedLocation ? (
         <p>
           선택한 위치: 위도 {selectedLocation.lat}, 경도 {selectedLocation.lon}
@@ -71,7 +75,7 @@ function LocationInfo() {
         <p> 선택된 위치가 없습니다.</p>
       )}
 
-      {/*  선택한 위치의 변환된 주소 표시 */}
+      {/* 선택한 위치의 변환된 주소 표시 */}
       {selectedAddress ? (
         <p>
           선택한 주소: <strong>{selectedAddress}</strong>
@@ -80,12 +84,12 @@ function LocationInfo() {
         <p> 선택한 주소 정보 없음</p>
       )}
 
-      {/*  선택한 '도' 정보만 표시 */}
+      {/* 선택한 '도' 정보만 표시 */}
       <p>
         선택한 도: <strong>{getProvinceName(selectedRegion)}</strong>
       </p>
 
-      {/*  Kakao Map 저장 상태 표시 */}
+      {/* Kakao Map 저장 상태 표시 */}
       <p>
         Kakao Map 상태:{' '}
         {map ? (
