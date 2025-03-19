@@ -1,40 +1,40 @@
 import { create } from 'zustand';
 import supabase from '@/utils/supabase';
 
-interface Diary {
+export interface Diary {
   id: number;
-  user_id: string;
+  user_id: string | null;
   title: string;
   place: string;
   place_type: string;
   content: string;
   post_date: string;
-  tag: string;
-  img: string;
-  like_count: number;
+  tag: string[] | null;
+  img: string[] | null;
+  like_count: number | null;
   is_public: boolean;
-  created_at: string;
-  updated_at: string;
+  created_at: string | null;
+  updated_at: string | null;
 }
 
 interface Marker {
   id: number;
   user_id: string;
-  created_at: string;
+  created_at: string | null;
   marker_type: string;
   marker_color: string;
   lat: number;
   lon: number;
-  diary_id: number | null;
+  diary_id: number[] | null;
 }
 
 interface Profile {
   user_id: string;
   email: string;
-  nickname: string;
-  profile_msg: string;
-  profile_img: string;
-  created_at: string;
+  nickname: string | null;
+  profile_msg: string | null;
+  profile_img: string | null;
+  created_at: string | null;
 }
 
 interface TableState {
@@ -53,6 +53,7 @@ interface TableState {
   };
   currentUserId: string | null;
   fetchCurrentUserData: () => Promise<void>;
+  getCurrentUserDiaries: () => Diary[];
 
   fetchDiaries: () => Promise<void>;
   fetchMarkers: (userId: string) => Promise<void>;
@@ -95,6 +96,12 @@ const useTableStore = create<TableState>((set, get) => ({
     } catch (error: any) {
       console.error('사용자 데이터 가져오기 실패:', error.message);
     }
+  },
+
+  getCurrentUserDiaries: () => {
+    const { diaries, currentUserId } = get();
+    if (!currentUserId) return [];
+    return diaries.filter((diary) => diary.user_id === currentUserId);
   },
 
   fetchDiaries: async () => {

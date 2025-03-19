@@ -12,8 +12,26 @@ import PublicDiary from './pages/public-diary';
 import WriteHereMap from './pages/write-here-map';
 import DiaryCalendar from './pages/diary-calendar';
 import GoodBye from './pages/good-bye';
+import { useEffect } from 'react';
+import useTableStore from './store/DiaryData';
 
 function App() {
+  const fetchCurrentUserData = useTableStore(
+    (state) => state.fetchCurrentUserData
+  );
+
+  useEffect(() => {
+    const initializeApp = async () => {
+      try {
+        await fetchCurrentUserData();
+      } catch (error) {
+        console.error('초기화 실패:', error);
+      }
+    };
+
+    initializeApp();
+  }, [fetchCurrentUserData]);
+
   return (
     <BrowserRouter>
       <Layout>
