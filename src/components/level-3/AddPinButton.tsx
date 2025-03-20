@@ -45,7 +45,7 @@ export default function MarkerSelector() {
   const selectedMarkerPath = `${BASE_PATH}${selectedMarker || 'pin-1'}-${selectedColor || 'black'}.svg`;
 
   return (
-    <div className="fixed bottom-10 right-10 flex items-center space-x-3 z-[1000]">
+    <div className="fixed bottom-10 right-10 flex items-center z-[1000]">
       {/* 미리보기 */}
       <div className="flex items-center space-x-2">
         <img src={selectedMarkerPath} className="w-10 h-10" alt="선택된 마커" />
@@ -68,7 +68,7 @@ export default function MarkerSelector() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
-          className="absolute bottom-[60px] right-3 bg-white p-1 rounded-full shadow-lg flex flex-col items-center space-y-2"
+          className="absolute bottom-[60px] right-0 bg-white p-1 rounded-full shadow-lg flex flex-col items-center space-y-2"
         >
           {/* 색상 미리보기 버튼 */}
           <button
