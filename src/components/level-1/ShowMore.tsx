@@ -7,12 +7,10 @@ interface ShowMoreProps {
 
 function ShowMore({ onEdit, onDelete }: ShowMoreProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
-  const toggleDropdown = () => setIsDropdownOpen((prev) => !prev);
-
-  // 드롭다운 버튼 외부 클릭 시 드롭다운 닫기
   const dropdownRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
+
+  const toggleDropdown = () => setIsDropdownOpen((prev) => !prev);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -34,7 +32,7 @@ function ShowMore({ onEdit, onDelete }: ShowMoreProps) {
   }, []);
 
   return (
-    <div>
+    <div className="relative">
       <button
         onClick={toggleDropdown}
         aria-label="더 보기"
@@ -50,7 +48,11 @@ function ShowMore({ onEdit, onDelete }: ShowMoreProps) {
 
       <div
         ref={dropdownRef}
-        className={`absolute bg-white border border-[var(--light-gray)] rounded-lg shadow-lg w-40 z-50 transition-all duration-300 ${isDropdownOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
+        className={`absolute right-full mr-2 bg-white border border-[var(--light-gray)] rounded-lg shadow-lg w-40 z-50 transition-all duration-300 ${
+          isDropdownOpen
+            ? 'opacity-100 pointer-events-auto'
+            : 'opacity-0 pointer-events-none'
+        }`}
       >
         <button
           onClick={onEdit}

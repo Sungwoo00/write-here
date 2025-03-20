@@ -3,7 +3,11 @@ import { getWidth, watchWidth } from '@/utils/width-element';
 import Spring from '../level-1/Spring';
 import { throttle } from 'lodash-es';
 
-function RendererSpring() {
+interface RendererSpringProps {
+  className?: string;
+}
+
+function RendererSpring({ className }: RendererSpringProps) {
   const divRef = useRef<HTMLDivElement>(null);
   const [springs, setSprings] = useState<number>(0);
   const springWidth = 28;
@@ -27,7 +31,7 @@ function RendererSpring() {
   }, []);
 
   return (
-    <div className="w-auto m-4" ref={divRef}>
+    <div className={`w-auto m-4 ${className}`} ref={divRef}>
       <div className="flex justify-center">
         {[...Array(springs)].map((_, index) => (
           <div key={index} className={index > 0 ? '-ml-1.5' : ''}>
