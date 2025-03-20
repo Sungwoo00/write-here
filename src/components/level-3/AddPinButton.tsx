@@ -25,7 +25,7 @@ export default function MarkerSelector() {
       setSelectedMarker: (marker: string) => void;
     };
 
-  //  Zustand에서 선택된 값이 없으면 초기값 적용
+  // 선택된 값이 없으면 초기값 적용
   useEffect(() => {
     if (!selectedMarker) setSelectedMarker('pin-1');
     if (!selectedColor) setSelectedColor('black');
@@ -41,7 +41,7 @@ export default function MarkerSelector() {
     setSelectedColor(color);
   };
 
-  // 선택한 마커와 색상에 따라 파일명 생성 (초기값 보장)
+  // 선택한 마커와 색상에 따라 파일명 생성 (초기값 보장)(구현 안됨 왜 안되지)
   const selectedMarkerPath = `${BASE_PATH}${selectedMarker || 'pin-1'}-${selectedColor || 'black'}.svg`;
 
   return (

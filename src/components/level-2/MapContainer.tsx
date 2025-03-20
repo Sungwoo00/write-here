@@ -260,21 +260,5 @@ function MapContainer() {
     </div>
   );
 }
-interface MapContainerProps {
-  selectedColor: string;
-  selectedMarker: string;
-}
-
-function MapContainerWithProps({
-  selectedColor,
-  selectedMarker,
-}: MapContainerProps) {
-  return (
-    <div style={{ borderColor: selectedColor }}>
-      {/* Map rendering logic */}
-      <p>Selected Marker: {selectedMarker}</p>
-    </div>
-  );
-}
 
 export default MapContainer;
