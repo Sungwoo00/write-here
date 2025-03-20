@@ -2,15 +2,15 @@ import { create } from 'zustand';
 import supabase from '@/utils/supabase';
 import { Database } from '@/types/database.types';
 
-type Diary = Database['public']['Tables']['diaries']['Row'];
+export type Diary = Database['public']['Tables']['diaries']['Insert'];
 
 //사용 제외할 데이터 사용 양식
 // type DiaryPayload = Omit<Diary, 'user_id' | 'created_at' | 'updated_at'>;
 
-type Marker = Database['public']['Tables']['markers']['Row'];
+export type Marker = Database['public']['Tables']['markers']['Insert'];
 // type MarkerPayload = Omit<Marker, 'created_at'>;
 
-type Profile = Database['public']['Tables']['profiles']['Row'];
+export type Profile = Database['public']['Tables']['profiles']['Insert'];
 // type Profileload = Omit<Profile, 'created_at'>;
 
 interface TableState {
