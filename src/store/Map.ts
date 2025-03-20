@@ -28,6 +28,11 @@ interface MapState {
 
   currentMarker: unknown | null;
   setCurrentMarker: (markerInstance: unknown) => void;
+
+  selectedColor: string;
+  setSelectedColor: (color: string) => void;
+  selectedMarker: string;
+  setSelectedMarker: (marker: string) => void;
 }
 
 export const useMapStore = create<MapState>((set, get) => ({
@@ -65,4 +70,11 @@ export const useMapStore = create<MapState>((set, get) => ({
 
   currentMarker: null,
   setCurrentMarker: (markerInstance) => set({ currentMarker: markerInstance }),
+
+  selectedColor: '#000000', // 기본 색상 (검정)
+  setSelectedColor: (color) => set({ selectedColor: color }),
+  selectedMarker: 'pin-1-black', // 기본 마커
+  setSelectedMarker: (marker) => set({ selectedMarker: marker }),
 }));
+
+// Removed unused MarkerSelector component and its props
