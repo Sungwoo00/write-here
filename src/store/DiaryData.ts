@@ -1,41 +1,17 @@
 import { create } from 'zustand';
 import supabase from '@/utils/supabase';
+import { Database } from '@/types/database.types';
 
-export interface Diary {
-  id: number;
-  user_id: string | null;
-  title: string;
-  place: string;
-  place_type: string;
-  content: string;
-  post_date: string;
-  tag: string[] | null;
-  img: string[] | null;
-  like_count: number | null;
-  is_public: boolean;
-  created_at: string | null;
-  updated_at: string | null;
-}
+export type Diary = Database['public']['Tables']['diaries']['Insert'];
 
-interface Marker {
-  id: number;
-  user_id: string;
-  created_at: string | null;
-  marker_type: string;
-  marker_color: string;
-  lat: number;
-  lon: number;
-  diary_id: number[] | null;
-}
+//사용 제외할 데이터 사용 양식
+// type DiaryPayload = Omit<Diary, 'user_id' | 'created_at' | 'updated_at'>;
 
-interface Profile {
-  user_id: string;
-  email: string;
-  nickname: string | null;
-  profile_msg: string | null;
-  profile_img: string | null;
-  created_at: string | null;
-}
+export type Marker = Database['public']['Tables']['markers']['Insert'];
+// type MarkerPayload = Omit<Marker, 'created_at'>;
+
+export type Profile = Database['public']['Tables']['profiles']['Insert'];
+// type Profileload = Omit<Profile, 'created_at'>;
 
 interface TableState {
   diaries: Diary[];
