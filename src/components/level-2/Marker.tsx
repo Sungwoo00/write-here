@@ -1,23 +1,19 @@
+import { useMapStore } from '@/store/Map';
 import { useEffect } from 'react';
-
-const MARKER_SVG_PATH = '/icons/icon-location-pin-underbar.svg';
 
 interface MarkerProps {
   map: kakao.maps.Map | kakao.maps.Roadview | undefined;
-  latitude: number;
-  longitude: number;
 }
 
-export const Marker = ({ map, latitude, longitude }: MarkerProps) => {
-  //const [marker, setLocalMarker] = useState<any>(null);
-
+export const Marker = ({ map }: MarkerProps) => {
+  const { tempMarker } = useMapStore();
   useEffect(() => {
     if (!map) return;
-
+    const { lat, lon, marker_path } = tempMarker;
     const kakao = window.kakao;
-    const position = new kakao.maps.LatLng(latitude, longitude);
+    const position = new kakao.maps.LatLng(lat, lon);
     const imageSize = new kakao.maps.Size(40, 40);
-    const markerImage = new kakao.maps.MarkerImage(MARKER_SVG_PATH, imageSize);
+    const markerImage = new kakao.maps.MarkerImage(marker_path, imageSize);
 
     const newMarker = new kakao.maps.Marker({
       position,
@@ -25,12 +21,10 @@ export const Marker = ({ map, latitude, longitude }: MarkerProps) => {
       map,
     });
 
-    // setLocalMarker(newMarker);
-
     return () => {
       newMarker.setMap(null);
     };
-  }, [map, latitude, longitude]);
+  }, [map, tempMarker]);
 
   return null;
 };

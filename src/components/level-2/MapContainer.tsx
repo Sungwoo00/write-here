@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { Marker } from '@/components/level-2/Marker';
 import { useMapStore } from '@/store/Map';
 
@@ -6,159 +6,101 @@ const LocationIcon = '/icons/icon-gps.svg';
 
 function MapContainer() {
   const {
-    map,
-    setMap,
-    setSelectedLocation,
-    //setSelectedRegion,
-    addSavedMarker,
-    savedMarkers,
-    initialLocation,
-    setInitialLocation,
+    setTempMarkerLocation,
+    setTempMarkerRegion,
+    setInitialPlace,
     currentLat,
     currentLon,
     setCurrentLocation,
-    currentMarker,
-    //setCurrentMarker,
-  } = useMapStore() as {
-    map: kakao.maps.Map | null;
-    setMap: (map: kakao.maps.Map) => void;
-    setSelectedLocation: (lat: number, lon: number) => void;
-    addSavedMarker: (
-      lat: number,
-      lon: number,
-      address: string,
-      description: string
-    ) => void;
-    savedMarkers: {
-      lat: number;
-      lon: number;
-      address: string;
-      region: string;
-    }[];
-    initialLocation: [number, number] | null;
-    setInitialLocation: (lat: number, lon: number) => void;
-    currentLat: number;
-    currentLon: number;
-    setCurrentLocation: (lat: number, lon: number) => void;
-    currentMarker: kakao.maps.Marker | null;
-  };
+    addMarkerMode,
+    setAddMarkerMode,
+  } = useMapStore();
 
-  const [currentAddress, setCurrentAddress] = useState('');
+  const mapRef = useRef<kakao.maps.Map | null>(null);
 
   useEffect(() => {
-    const apiKey = import.meta.env.VITE_KAKAO_API_KEY;
-    if (!apiKey) return;
+    const initMap = () => {
+      const container = document.getElementById('map');
+      if (!container) return;
+      const options = {
+        center: new kakao.maps.LatLng(currentLat, currentLon),
+        level: 5,
+      };
+      mapRef.current = new kakao.maps.Map(container, options);
+    };
 
-    if (!map) {
+    if (!window.kakao) {
+      const apiKey = import.meta.env.VITE_KAKAO_API_KEY;
       const script = document.createElement('script');
       script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${apiKey}&autoload=false&libraries=services`;
       script.async = true;
       document.head.appendChild(script);
-
       script.onload = () => {
-        const kakao = window.kakao;
-        kakao.maps.load(() => {
-          const container = document.getElementById('map');
-          if (!container) return;
-
-          const options = {
-            center: new kakao.maps.LatLng(currentLat, currentLon),
-            level: 9,
-          };
-
-          const newMap = new kakao.maps.Map(container, options);
-          setMap(newMap);
-
-          const geocoder = new kakao.maps.services.Geocoder();
-
-          //  최초 로딩 시 현재 위치 가져오기
-          if (!initialLocation) {
-            if (navigator.geolocation) {
-              navigator.geolocation.getCurrentPosition((position) => {
-                const lat = position.coords.latitude;
-                const lon = position.coords.longitude;
-                setInitialLocation(lat, lon);
-                setCurrentLocation(lat, lon);
-                // console.log(` 현재 위치 설정됨: 위도 ${lat}, 경도 ${lon}`);
-              });
-            }
-          }
-
-          //  지도 클릭 시 위치 선택
-          kakao.maps.event.addListener(
-            newMap,
-            'click',
-            (mouseEvent: kakao.maps.event.MouseEvent) => {
-              const latlng = mouseEvent.latLng;
-              const lat = latlng.getLat();
-              const lon = latlng.getLng();
-
-              setSelectedLocation(lat, lon);
-              setCurrentLocation(lat, lon);
-              // console.log(` 선택한 위치: 위도 ${lat}, 경도 ${lon}`);
-
-              if (currentMarker) {
-                currentMarker.setPosition(latlng);
-              }
-
-              geocoder.coord2Address(
-                lon,
-                lat,
-                (
-                  result: {
-                    address: kakao.maps.services.Address;
-                    road_address: kakao.maps.services.RoadAaddress | null;
-                  }[],
-                  status: kakao.maps.services.Status
-                ) => {
-                  if (status === kakao.maps.services.Status.OK) {
-                    const address = result[0].road_address
-                      ? result[0].road_address.address_name
-                      : result[0].address.address_name;
-                    setCurrentAddress(address);
-                    //  console.log(` 변환된 주소: ${address}`);
-                  }
-                }
-              );
-            }
-          );
-        });
+        window.kakao.maps.load(initMap);
       };
-
-      return () => {
-        document.head.removeChild(script);
-      };
+    } else {
+      window.kakao.maps.load(initMap);
     }
+  }, [currentLat, currentLon, setCurrentLocation]);
+  useEffect(() => {
+    const handleAddMarker = (mouseEvent: kakao.maps.event.MouseEvent) => {
+      const latlng = mouseEvent.latLng;
+      const lat = latlng.getLat();
+      const lon = latlng.getLng();
+      //콘솔로그 지울예정
+      console.log(lat, lon);
+      const geocoder = new window.kakao.maps.services.Geocoder();
+      geocoder.coord2Address(
+        lon,
+        lat,
+        (
+          result: {
+            address: kakao.maps.services.Address;
+          }[],
+          status: kakao.maps.services.Status
+        ) => {
+          if (status === kakao.maps.services.Status.OK) {
+            const { address_name, region_1depth_name } = result[0].address;
+            //콘솔로그 지울예정
+            console.log(region_1depth_name);
+            setInitialPlace(address_name);
+            setTempMarkerRegion(region_1depth_name);
+          }
+        }
+      );
+      setTempMarkerLocation(lat, lon);
+      //마커 찍히고 레지스터 페이지 올라오게 만들어야함
+    };
+    if (mapRef.current && addMarkerMode) {
+      kakao.maps.event.addListener(mapRef.current, 'click', handleAddMarker);
+    }
+
+    return () => {
+      if (mapRef.current) {
+        kakao.maps.event.removeListener(
+          mapRef.current,
+          'click',
+          handleAddMarker
+        );
+      }
+    };
   }, [
-    map,
-    currentLat,
-    currentLon,
-    currentMarker,
-    initialLocation,
-    setCurrentLocation,
-    setInitialLocation,
-    setMap,
-    setSelectedLocation,
+    addMarkerMode,
+    setAddMarkerMode,
+    setInitialPlace,
+    setTempMarkerLocation,
+    setTempMarkerRegion,
   ]);
 
-  //  현재 위치 버튼 클릭 시 실행
   const goToCurrentLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((position) => {
         const lat = position.coords.latitude;
         const lon = position.coords.longitude;
-        setCurrentLocation(lat, lon);
-        setInitialLocation(lat, lon);
-
-        // console.log(` 현재 위치 업데이트: 위도 ${lat}, 경도 ${lon}`);
-
-        if (map) {
+        if (mapRef.current) {
           const kakao = window.kakao;
           const locPosition = new kakao.maps.LatLng(lat, lon);
-          map.setCenter(locPosition);
-          if (currentMarker) {
-            currentMarker.setPosition(locPosition);
-          }
+          mapRef.current.setCenter(locPosition);
         }
       });
     } else {
@@ -195,7 +137,6 @@ function MapContainer() {
           }}
         ></div>
 
-        {/*  현재 위치 버튼 */}
         <button
           onClick={goToCurrentLocation}
           style={{
@@ -221,41 +162,7 @@ function MapContainer() {
             style={{ width: '24px', height: '24px' }}
           />
         </button>
-
-        {/*  마커 저장 버튼 */}
-        <button
-          onClick={() => {
-            if (currentAddress) {
-              addSavedMarker(currentLat, currentLon, currentAddress, '');
-            }
-          }}
-          style={{
-            marginTop: '10px',
-            padding: '8px 12px',
-            background: '#4CAF50',
-            color: 'white',
-            borderRadius: '5px',
-            cursor: 'pointer',
-          }}
-        >
-          마커 저장
-        </button>
-
-        {/*  선택한 위치 마커 */}
-        {map && (
-          <Marker map={map} latitude={currentLat} longitude={currentLon} />
-        )}
-
-        {/* 저장된 마커들 표시 */}
-        {map &&
-          savedMarkers.map((marker, index) => (
-            <Marker
-              key={index}
-              map={map}
-              latitude={marker.lat}
-              longitude={marker.lon}
-            />
-          ))}
+        {mapRef.current && addMarkerMode && <Marker map={mapRef.current} />}
       </div>
     </div>
   );

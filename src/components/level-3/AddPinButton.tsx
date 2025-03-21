@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { X, Plus } from 'lucide-react';
 import { useMapStore } from '@/store/Map';
@@ -12,46 +12,41 @@ const COLOR_MAP = {
 };
 
 const MARKER_TYPES = ['pin-1', 'pin-2', 'pin-3', 'pin-4', 'pin-5'];
+const BASE_PATH = '/icons/pins/';
+
+const DEFAULT_MARKER = 'pin-1';
+const DEFAULT_COLOR: keyof typeof COLOR_MAP = 'black';
 
 export default function MarkerSelector() {
+  const { setTempMarkerPath } = useMapStore();
+
+  const [selectedMarker, setSelectedMarker] = useState<string>(DEFAULT_MARKER);
+  const [selectedColor, setSelectedColor] =
+    useState<keyof typeof COLOR_MAP>(DEFAULT_COLOR);
+
   const [isOpen, setIsOpen] = useState(false);
   const [isColorPaletteOpen, setIsColorPaletteOpen] = useState(false);
 
-  const {
-    selectedColor,
-    setSelectedColor,
-    selectedMarker,
-    setSelectedMarker,
-    selectedMarkerPath,
-  } = useMapStore() as {
-    selectedColor: keyof typeof COLOR_MAP;
-    setSelectedColor: (color: keyof typeof COLOR_MAP) => void;
-    selectedMarker: string;
-    setSelectedMarker: (marker: string) => void;
-    selectedMarkerPath: string;
-  };
-
-  // 초기값 설정
-  useEffect(() => {
-    if (!selectedMarker) setSelectedMarker('pin-1');
-    if (!selectedColor) setSelectedColor('black');
-  }, [selectedMarker, selectedColor, setSelectedMarker, setSelectedColor]);
-
-  // 마커 선택 핸들러
+  // ✅ 마커 선택 핸들러 (한 번 클릭하면 바로 적용)
   const handleMarkerSelect = (markerType: string) => {
     setSelectedMarker(markerType);
+    setTempMarkerPath(`${BASE_PATH}${markerType}-${selectedColor}.svg`); // ✅ markerType을 직접 사용
   };
 
-  // 색상 선택 핸들러
+  // ✅ 색상 선택 핸들러
   const handleColorSelect = (color: keyof typeof COLOR_MAP) => {
     setSelectedColor(color);
+    setTempMarkerPath(`${BASE_PATH}${selectedMarker}-${color}.svg`); // ✅ selectedColor가 업데이트되기 전에 color를 직접 사용
   };
+
+  // ✅ 미리보기 이미지 경로
+  const previewMarkerPath = `${BASE_PATH}${selectedMarker}-${selectedColor}.svg`;
 
   return (
     <div className="fixed bottom-10 right-10 flex items-center z-[1000]">
       {/* 미리보기 */}
       <div className="flex items-center space-x-2">
-        <img src={selectedMarkerPath} className="w-10 h-10" alt="선택된 마커" />
+        <img src={previewMarkerPath} className="w-10 h-10" alt="선택된 마커" />
       </div>
 
       {/* 플로팅 버튼 */}
@@ -84,26 +79,24 @@ export default function MarkerSelector() {
           {/* 색상 선택 팔레트 */}
           {isColorPaletteOpen && (
             <div className="absolute right-[120%] top-0 bg-white p-2 rounded-xl shadow-lg flex flex-col items-center space-y-2">
-              {Object.entries(COLOR_MAP).map(
-                ([colorName, colorCode], index) => (
-                  <button
-                    key={index}
-                    className="w-8 h-8 rounded-full border-2 border-gray-300"
-                    style={{ backgroundColor: colorCode }}
-                    onClick={() =>
-                      handleColorSelect(colorName as keyof typeof COLOR_MAP)
-                    }
-                  ></button>
-                )
-              )}
+              {Object.entries(COLOR_MAP).map(([colorName, colorCode]) => (
+                <button
+                  key={colorName}
+                  className="w-8 h-8 rounded-full border-2 border-gray-300"
+                  style={{ backgroundColor: colorCode }}
+                  onClick={() =>
+                    handleColorSelect(colorName as keyof typeof COLOR_MAP)
+                  }
+                ></button>
+              ))}
             </div>
           )}
 
           {/* 마커 선택 리스트 */}
           <div className="flex flex-col items-center space-y-2">
-            {MARKER_TYPES.map((marker, index) => (
+            {MARKER_TYPES.map((marker) => (
               <button
-                key={index}
+                key={marker}
                 type="button"
                 className={`w-12 h-12 flex items-center justify-center ${
                   selectedMarker === marker
@@ -113,7 +106,7 @@ export default function MarkerSelector() {
                 onClick={() => handleMarkerSelect(marker)}
               >
                 <img
-                  src={`/icons/pins/${marker}-${selectedColor}.svg`}
+                  src={`${BASE_PATH}${marker}-${selectedColor}.svg`}
                   className="w-8 h-8"
                   alt={marker}
                 />
