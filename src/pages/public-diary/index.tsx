@@ -1,26 +1,33 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import DiaryCard from '@/components/level-2/DiaryCard';
 import useTableStore from '@/store/DiaryData';
 import { tm } from '@/utils/tw-merge';
 
 function PublicDiary() {
-  const { fetchDiaries, diaries, loading, error } = useTableStore();
+  const { fetchPublicDiaries, publicDiaries, loading, error, currentUserId } =
+    useTableStore();
+  const [filteredDiaries, setFilteredDiaries] = useState([]);
 
   useEffect(() => {
-    fetchDiaries(); // 모든 다이어리 가져오기
-  }, [fetchDiaries]);
+    fetchPublicDiaries(); // 공개된 다이어리 불러오기
+  }, [fetchPublicDiaries]);
 
-  // 공개된 다이어리만 필터링
-  const publicDiaries = diaries.filter((diary) => diary.is_public);
+  useEffect(() => {
+    if (currentUserId) {
+      setFilteredDiaries(
+        publicDiaries.filter((diary) => diary.user_id !== currentUserId)
+      );
+    }
+  }, [publicDiaries, currentUserId]);
 
-  if (loading.diaries)
+  if (loading.publicDiaries)
     return <p className="text-center">공개된 다이어리를 불러오는 중...</p>;
-  if (error.diaries)
-    return <p className="text-center">에러: {error.diaries}</p>;
+  if (error.publicDiaries)
+    return <p className="text-center">에러: {error.publicDiaries}</p>;
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen w-full lg:pl-35 overflow-x-hidden">
-      {publicDiaries.length > 0 ? (
+      {filteredDiaries.length > 0 ? (
         <div
           className={tm(
             'grid w-full gap-3 auto-rows-fr max-w-screen justify-items-center',
@@ -31,7 +38,7 @@ function PublicDiary() {
             '[@media_(min-width:1650px)]:grid-cols-4'
           )}
         >
-          {publicDiaries.map((diary) => (
+          {filteredDiaries.map((diary) => (
             <DiaryCard key={diary.diary_id} diary={diary} />
           ))}
         </div>
