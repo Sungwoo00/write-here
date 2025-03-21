@@ -1,17 +1,21 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import DiaryCard from '@/components/level-2/DiaryCard';
 import useTableStore from '@/store/DiaryData';
 import { tm } from '@/utils/tw-merge';
 
 function Diary() {
-  const { fetchCurrentUserData, getCurrentUserDiaries, loading, error } =
+  const { fetchCurrentUserData, fetchDiaries, loading, error } =
     useTableStore();
+  const [diaries, setDiaries] = useState([]); // 다이어리 상태 관리
 
   useEffect(() => {
-    fetchCurrentUserData(); // 현재 사용자 정보를 가져온 후 다이어리 데이터를 자동으로 불러오기
-  }, [fetchCurrentUserData]);
-
-  const diaries = getCurrentUserDiaries(); // 현재 로그인한 사용자의 다이어리만 가져오기
+    fetchCurrentUserData(); // 사용자 정보 불러오기
+    const loadDiaries = async () => {
+      await fetchDiaries(); // Zustand store 내부 상태를 업데이트
+      setDiaries(useTableStore.getState().diaries); // 최신 상태를 가져와 반영
+    };
+    loadDiaries();
+  }, [fetchCurrentUserData, fetchDiaries]);
 
   if (loading.diaries)
     return <p className="text-center">다이어리를 불러오는 중...</p>;
