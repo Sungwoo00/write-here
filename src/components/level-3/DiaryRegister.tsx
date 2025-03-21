@@ -60,7 +60,7 @@ function DiaryRegister() {
   const uploadImage = async (
     imageUrl: string,
     userId: string,
-    diaryId: string,
+    diaryId: number,
     index: number
   ) => {
     try {
@@ -111,14 +111,14 @@ function DiaryRegister() {
       const { data, error } = await supabase
         .from('diaries')
         .insert(diaryData)
-        .select('id')
+        .select('diary_id')
         .single();
 
       if (error) {
         throw new Error(error.message);
       }
       alert('다이어리 저장완료');
-      const diaryId = data?.id;
+      const diaryId = data?.diary_id;
 
       const { data: userData } = await supabase.auth.getUser();
       const userId = userData.user?.id;

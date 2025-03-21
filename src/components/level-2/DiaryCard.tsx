@@ -1,25 +1,34 @@
+import { Tables } from '@/types/database.types';
 import { IMAGE_PATHS } from '@/constants/imagePaths';
 import { tm } from '@/utils/tw-merge';
 import Tag from '@/components/level-1/Tag';
 import LikeToggle from '@/components/level-1/LikeToggle';
-import useDiaryStore from '@/store/diary';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface DiaryCardProps {
-  title: string;
+  diary: Tables<'diaries'>;
 }
 
-const DiaryCard = ({ title }: DiaryCardProps) => {
-  const diary = useDiaryStore((state) =>
-    state.diaries.find((entry) => entry.title === title)
-  );
+// place type에 따라 카드 배경 색상 다르게 적용
+const getCardColor = (placeType: string) => {
+  const colors: Record<string, string> = {
+    cafe: 'bg-[var(--card-brown)]',
+    water: 'bg-[var(--card-blue)]',
+    restaurant: 'bg-[var(--card-orange)]',
+    accommodation: 'bg-[var(--card-purple)]',
+    nature: 'bg-[var(--card-green)]',
+    culture: 'bg-[var(--card-pink)]',
+    urban: 'bg-[var(--card-gray)]',
+  };
+  return colors[placeType] || 'bg-[var(--card-gray)]';
+};
 
-  const toggleLike = useDiaryStore((state) => state.toggleLike);
+const DiaryCard = ({ diary }: DiaryCardProps) => {
   const [isLiked, setIsLiked] = useState(false);
+  const navigate = useNavigate();
 
-  if (!diary) return null;
-
-  const formattedDate = !isNaN(Date.parse(diary.post_date))
+  const formattedDate = diary.post_date
     ? new Date(diary.post_date).toLocaleDateString('ko-KR', {
         year: 'numeric',
         month: '2-digit',
@@ -29,18 +38,27 @@ const DiaryCard = ({ title }: DiaryCardProps) => {
 
   const handleLikeToggle = () => {
     setIsLiked((prev) => !prev);
-    toggleLike(diary.title);
+  };
+
+  // 다이어리 클릭 시 디테일 페이지로 이동
+  const handleCardClick = () => {
+    navigate(`/diary/${diary.diary_id}`);
   };
 
   return (
-    <div className="m-6">
+    <button
+      className="m-6 cursor-pointer text-left focus:outline-none"
+      onClick={handleCardClick}
+      type="button"
+    >
       <div className="w-[366px] h-[277px] lg:h-[295px] lg:w-[370px] bg-white rounded-2xl shadow-md overflow-hidden">
+        {/* 이미지 배경 */}
         <div
           className={tm(
             'relative w-full h-[157px] bg-cover bg-center rounded-t-2xl'
           )}
           style={{
-            backgroundImage: `url(${diary.img.length > 0 ? URL.createObjectURL(diary.img[0]) : IMAGE_PATHS.blueBottle})`,
+            backgroundImage: `url(${diary.img?.[0] || IMAGE_PATHS.blueBottle})`,
           }}
         >
           <div className="absolute bottom-3 left-3">
@@ -48,9 +66,11 @@ const DiaryCard = ({ title }: DiaryCardProps) => {
           </div>
         </div>
 
+        {/* place type에 따라 동적으로 카드 배경 색상 적용 */}
         <div
           className={tm(
-            'w-[366px] h-[120px] lg:h-[138px] lg:w-[370px] p-3 overflow-hidden bg-[var(--card-brown)] flex flex-col justify-between'
+            'w-[366px] h-[120px] lg:h-[138px] lg:w-[370px] p-3 overflow-hidden flex flex-col justify-between',
+            getCardColor(diary.place_type)
           )}
         >
           <div className="flex justify-between items-center w-full">
@@ -67,13 +87,11 @@ const DiaryCard = ({ title }: DiaryCardProps) => {
           </p>
 
           <div className="flex flex-wrap gap-2 mt-auto overflow-hidden font-[HSSanTokki]">
-            {diary.tag.map((tag, index) => (
-              <Tag key={index} tagText={tag} />
-            ))}
+            {diary.tag?.map((tag, index) => <Tag key={index} tagText={tag} />)}
           </div>
         </div>
       </div>
-    </div>
+    </button>
   );
 };
 
