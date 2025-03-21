@@ -8,7 +8,7 @@ function Diary() {
     useTableStore();
 
   useEffect(() => {
-    fetchCurrentUserData(); // 현재 사용자 정보를 가져온 후 다이어리 데이터를 자동으로 불러오기기
+    fetchCurrentUserData(); // 현재 사용자 정보를 가져온 후 다이어리 데이터를 자동으로 불러오기
   }, [fetchCurrentUserData]);
 
   const diaries = getCurrentUserDiaries(); // 현재 로그인한 사용자의 다이어리만 가져오기
@@ -32,7 +32,7 @@ function Diary() {
           )}
         >
           {diaries.map((diary) => (
-            <DiaryCard key={diary.id} diary={diary} />
+            <DiaryCard key={diary.diary_id} diary={diary} />
           ))}
         </div>
       ) : (

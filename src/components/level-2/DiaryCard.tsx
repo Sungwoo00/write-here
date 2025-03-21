@@ -42,7 +42,7 @@ const DiaryCard = ({ diary }: DiaryCardProps) => {
 
   // 다이어리 클릭 시 디테일 페이지로 이동
   const handleCardClick = () => {
-    navigate(`/diary/${diary.id}`);
+    navigate(`/diary/${diary.diary_id}`);
   };
 
   return (

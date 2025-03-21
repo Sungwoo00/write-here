@@ -32,7 +32,7 @@ function PublicDiary() {
           )}
         >
           {publicDiaries.map((diary) => (
-            <DiaryCard key={diary.id} diary={diary} />
+            <DiaryCard key={diary.diary_id} diary={diary} />
           ))}
         </div>
       ) : (
