@@ -4,19 +4,16 @@ import useTableStore from '@/store/DiaryData';
 import { tm } from '@/utils/tw-merge';
 
 function PublicDiary() {
-  const { fetchDiaries, diaries, loading, error } = useTableStore();
+  const { fetchPublicDiaries, publicDiaries, loading, error } = useTableStore();
 
   useEffect(() => {
-    fetchDiaries(); // 모든 다이어리 가져오기
-  }, [fetchDiaries]);
+    fetchPublicDiaries(); //  공개 다이어리만 가져오기
+  }, [fetchPublicDiaries]);
 
-  // 공개된 다이어리만 필터링
-  const publicDiaries = diaries.filter((diary) => diary.is_public);
-
-  if (loading.diaries)
+  if (loading.publicDiaries)
     return <p className="text-center">공개된 다이어리를 불러오는 중...</p>;
-  if (error.diaries)
-    return <p className="text-center">에러: {error.diaries}</p>;
+  if (error.publicDiaries)
+    return <p className="text-center">에러: {error.publicDiaries}</p>;
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen w-full lg:pl-35 overflow-x-hidden">
