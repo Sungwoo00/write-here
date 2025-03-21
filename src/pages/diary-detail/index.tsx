@@ -9,7 +9,7 @@ import supabase from '@/utils/supabase';
 import { Tables } from '@/types/database.types';
 
 function DiaryDetail() {
-  const { id } = useParams();
+  const { diary_id } = useParams();
   const navigate = useNavigate();
   const [diary, setDiary] = useState<Tables<'diaries'> | null>(null);
   const [loading, setLoading] = useState(true);
@@ -19,18 +19,17 @@ function DiaryDetail() {
 
   useEffect(() => {
     const fetchDiaryById = async () => {
-      if (!id) return;
+      if (!diary_id) return;
       setLoading(true);
       setError(null);
 
       const { data, error } = await supabase
         .from('diaries')
         .select('*')
-        .eq('id', Number(id)) // ID를 숫자로 변환 후 조회
-        .single(); // 단일 데이터 조회
+        .eq('diary_id', Number(diary_id))
+        .single();
 
       if (error) {
-        console.error('다이어리 불러오기 실패:', error);
         setError('데이터를 불러오는 중 오류가 발생했습니다.');
       } else {
         setDiary(data);
@@ -40,7 +39,7 @@ function DiaryDetail() {
     };
 
     fetchDiaryById();
-  }, [id]);
+  }, [diary_id]);
 
   if (loading) return <div className="text-center p-10">불러오는 중...</div>;
   if (error) return <div className="text-center p-10">{error}</div>;
@@ -56,14 +55,14 @@ function DiaryDetail() {
       const { error } = await supabase
         .from('diaries')
         .delete()
-        .eq('id', Number(id));
+        .eq('diary_id', Number(diary_id));
 
       if (error) {
         console.error('삭제 실패:', error);
         return;
       }
 
-      navigate('/diary'); // 삭제 후 다이어리 목록 페이지로 이동하기기
+      navigate('/diary'); // 삭제 후 다이어리 목록 페이지로 이동
     }
   };
 
@@ -72,7 +71,7 @@ function DiaryDetail() {
     const { error } = await supabase
       .from('diaries')
       .update({ content: editedContent })
-      .eq('id', Number(id));
+      .eq('diary_id', Number(diary_id));
 
     if (error) {
       console.error('수정 실패:', error);
@@ -106,7 +105,7 @@ function DiaryDetail() {
 
         <div className="block lg:flex lg:flex-row">
           <div className="lg:w-1/2">
-            {/* DiaryImageSwiper에 해당 다이어리의 이미지 배열 전달하기기 */}
+            {/* DiaryImageSwiper에 해당 다이어리의 이미지 배열 전달 */}
             <DiaryImageSwiper images={diary.img || []} />
           </div>
 
@@ -119,6 +118,7 @@ function DiaryDetail() {
               <h2 className="text-sm lg:text-xl">{diary.title}</h2>
             </div>
 
+            {/* 밑줄 */}
             <div className="mt-4 p-4 bg-white min-h-[120px] lg:min-h-[240px] flex flex-col justify-between">
               {isEditing ? (
                 <>
