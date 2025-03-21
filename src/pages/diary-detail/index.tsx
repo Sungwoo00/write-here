@@ -1,64 +1,85 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import ShowMore from '@/components/level-1/ShowMore';
 import Tag from '@/components/level-1/Tag';
 import DiaryImageSwiper from '@/components/level-2/DiaryImageSwiper';
 import LikeCounter from '@/components/level-2/LikeCounter';
 import RendererSpring from '@/components/level-2/RendererSpring';
-import useDiaryStore from '@/store/diary';
+import supabase from '@/utils/supabase';
+import { Tables } from '@/types/database.types';
 
 function DiaryDetail() {
+  const { id } = useParams();
   const navigate = useNavigate();
-  const { diaries, setDiaries } = useDiaryStore();
-
-  // diary 상태 추가하여 관리
-  const [diary, setDiary] = useState(diaries.length > 0 ? diaries[0] : null);
-
-  useEffect(() => {
-    setDiary(diaries.length > 0 ? diaries[0] : null);
-  }, [diaries]);
-
-  // editedContent를 diary.content와 동기화
-  const [editedContent, setEditedContent] = useState(
-    diary ? diary.content : ''
-  );
-
-  useEffect(() => {
-    setEditedContent(diary ? diary.content : '');
-  }, [diary]);
-
+  const [diary, setDiary] = useState<Tables<'diaries'> | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [editedContent, setEditedContent] = useState('');
 
-  if (!diary) {
+  useEffect(() => {
+    const fetchDiaryById = async () => {
+      if (!id) return;
+      setLoading(true);
+      setError(null);
+
+      const { data, error } = await supabase
+        .from('diaries')
+        .select('*')
+        .eq('id', Number(id)) // ID를 숫자로 변환 후 조회
+        .single(); // 단일 데이터 조회
+
+      if (error) {
+        console.error('다이어리 불러오기 실패:', error);
+        setError('데이터를 불러오는 중 오류가 발생했습니다.');
+      } else {
+        setDiary(data);
+        setEditedContent(data.content || '');
+      }
+      setLoading(false);
+    };
+
+    fetchDiaryById();
+  }, [id]);
+
+  if (loading) return <div className="text-center p-10">불러오는 중...</div>;
+  if (error) return <div className="text-center p-10">{error}</div>;
+  if (!diary)
     return <div className="text-center p-10">다이어리 데이터가 없습니다.</div>;
-  }
 
-  const handleEdit = () => {
-    setIsEditing(true);
-  };
+  // 수정 모드 활성화
+  const handleEdit = () => setIsEditing(true);
 
-  const handleDelete = () => {
+  // 다이어리 삭제 기능
+  const handleDelete = async () => {
     if (window.confirm('정말 삭제하시겠습니까?')) {
-      const updatedDiaries = diaries.filter(
-        (item) => item.title !== diary.title
-      );
-      setDiaries(updatedDiaries);
-      setDiary(updatedDiaries.length > 0 ? updatedDiaries[0] : null); // 삭제 후 diary 업데이트
+      const { error } = await supabase
+        .from('diaries')
+        .delete()
+        .eq('id', Number(id));
+
+      if (error) {
+        console.error('삭제 실패:', error);
+        return;
+      }
+
+      navigate('/diary'); // 삭제 후 다이어리 목록 페이지로 이동하기기
     }
   };
 
-  const handleSaveEdit = () => {
-    const updatedDiaries = diaries.map((item) =>
-      item.title === diary.title ? { ...item, content: editedContent } : item
-    );
-    setDiaries(updatedDiaries);
+  // 다이어리 수정 기능
+  const handleSaveEdit = async () => {
+    const { error } = await supabase
+      .from('diaries')
+      .update({ content: editedContent })
+      .eq('id', Number(id));
 
-    // 상태 업데이트를 위해 변경된 diary 찾아서 설정하기
-    const updatedDiary = updatedDiaries.find(
-      (item) => item.title === diary.title
-    );
-    setDiary(updatedDiary || null);
+    if (error) {
+      console.error('수정 실패:', error);
+      return;
+    }
 
+    setDiary((prev) => (prev ? { ...prev, content: editedContent } : null));
     setIsEditing(false);
   };
 
@@ -66,7 +87,7 @@ function DiaryDetail() {
     navigate('/write-here-map');
   };
 
-  // 최소 5줄 보장 (줄 간격 유지)
+  // 본문 줄 바꿈 유지 및 최소 5줄 유지
   const contentLines = editedContent.split('\n');
   while (contentLines.length < 5) {
     contentLines.push(' ');
@@ -85,7 +106,8 @@ function DiaryDetail() {
 
         <div className="block lg:flex lg:flex-row">
           <div className="lg:w-1/2">
-            <DiaryImageSwiper />
+            {/* DiaryImageSwiper에 해당 다이어리의 이미지 배열 전달하기기 */}
+            <DiaryImageSwiper images={diary.img || []} />
           </div>
 
           {/* 콘텐츠 영역 */}
@@ -135,8 +157,9 @@ function DiaryDetail() {
               )}
             </div>
 
+            {/* 태그 표시 */}
             <div className="flex flex-wrap gap-2 mt-6">
-              {diary.tag.map((tag, index) => (
+              {diary.tag?.map((tag, index) => (
                 <Tag key={index} tagText={tag} />
               ))}
             </div>
@@ -144,6 +167,7 @@ function DiaryDetail() {
         </div>
       </div>
 
+      {/* 지도 이동 버튼 */}
       <div className="mb-30 text-center">
         <button
           onClick={handleNavigateToMap}

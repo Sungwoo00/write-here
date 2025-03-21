@@ -1,14 +1,22 @@
 import { useEffect } from 'react';
 import DiaryCard from '@/components/level-2/DiaryCard';
-import useDiaryStore from '@/store/diary';
+import useTableStore from '@/store/DiaryData';
 import { tm } from '@/utils/tw-merge';
 
 function Diary() {
-  const { diaries } = useDiaryStore();
+  const { fetchCurrentUserData, getCurrentUserDiaries, loading, error } =
+    useTableStore();
 
   useEffect(() => {
-    console.log('현재 상태의 다이어리 목록:', diaries);
-  }, [diaries]);
+    fetchCurrentUserData(); // 현재 사용자 정보를 가져온 후 다이어리 데이터를 자동으로 불러오기
+  }, [fetchCurrentUserData]);
+
+  const diaries = getCurrentUserDiaries(); // 현재 로그인한 사용자의 다이어리만 가져오기
+
+  if (loading.diaries)
+    return <p className="text-center">다이어리를 불러오는 중...</p>;
+  if (error.diaries)
+    return <p className="text-center">에러 발생: {error.diaries}</p>;
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen w-full lg:pl-35 overflow-x-hidden">
@@ -24,7 +32,7 @@ function Diary() {
           )}
         >
           {diaries.map((diary) => (
-            <DiaryCard key={diary.title} title={diary.title} />
+            <DiaryCard key={diary.diary_id} diary={diary} />
           ))}
         </div>
       ) : (

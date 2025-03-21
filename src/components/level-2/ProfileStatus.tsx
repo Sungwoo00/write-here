@@ -1,6 +1,13 @@
 import { useEffect, useState } from 'react';
 import { getUserId } from '@/utils/auth';
 import supabase from '@/utils/supabase';
+import { PostgrestError } from '@supabase/supabase-js';
+
+// 커스텀 에러 타입 정의
+type CustomError = {
+  message: string;
+  cause?: unknown;
+};
 
 function ProfileStatus() {
   const [profile, setProfile] = useState({
@@ -32,8 +39,9 @@ function ProfileStatus() {
           status: data.profile_msg || '상태 메시지를 입력하세요.',
           avatar: data.profile_img || '/images/profile.jpg',
         });
-      } catch (error: any) {
-        console.error('프로필 불러오기 실패:', error.message);
+      } catch (error: unknown) {
+        const err = error as PostgrestError | CustomError;
+        console.error('프로필 불러오기 실패:', err.message);
       }
     };
 
@@ -70,8 +78,9 @@ function ProfileStatus() {
 
       setProfile(tempProfile);
       setPopupOpen(false);
-    } catch (error: any) {
-      console.error('프로필 업데이트 실패:', error.message);
+    } catch (error: unknown) {
+      const err = error as PostgrestError | CustomError;
+      console.error('프로필 업데이트 실패:', err.message);
       alert('프로필 업데이트 중 오류가 발생했습니다. 다시 시도해주세요.');
     }
   };
@@ -112,7 +121,7 @@ function ProfileStatus() {
 
       const filePath = `${userId}/${file.name}`;
 
-      const { data, error } = await supabase.storage
+      const { error } = await supabase.storage
         .from('avatars')
         .upload(filePath, file, { cacheControl: '3600' });
 
@@ -135,8 +144,9 @@ function ProfileStatus() {
         .from('profiles')
         .update({ profile_img: urlData.publicUrl })
         .eq('user_id', userId);
-    } catch (error: any) {
-      console.error('이미지 업로드 실패:', error.message);
+    } catch (error: unknown) {
+      const err = error as PostgrestError | CustomError;
+      console.error('이미지 업로드 실패:', err.message);
       alert('이미지 업로드 중 오류가 발생했습니다. 다시 시도해주세요.');
     }
   };
@@ -179,8 +189,14 @@ function ProfileStatus() {
 
           {/* 닉네임 입력 */}
           <div className="mb-2">
-            <label className="text-sm text-[var(--dark-gray)]">닉네임</label>
+            <label
+              htmlFor="name-input"
+              className="text-sm text-[var(--dark-gray)]"
+            >
+              닉네임
+            </label>
             <input
+              id="name-input"
               type="text"
               name="name"
               value={tempProfile.name}
@@ -191,10 +207,14 @@ function ProfileStatus() {
 
           {/* 상태 메시지 입력 */}
           <div className="mb-2">
-            <label className="text-sm text-[var(--dark-gray)]">
+            <label
+              htmlFor="status-input"
+              className="text-sm text-[var(--dark-gray)]"
+            >
               상태 메시지
             </label>
             <input
+              id="status-input"
               type="text"
               name="status"
               value={tempProfile.status}
@@ -205,10 +225,14 @@ function ProfileStatus() {
 
           {/* 프로필 이미지 업로드 */}
           <div className="mb-4">
-            <label className="text-sm text-[var(--dark-gray)]">
+            <label
+              htmlFor="profile-upload"
+              className="text-sm text-[var(--dark-gray)]"
+            >
               프로필 사진 변경
             </label>
             <input
+              id="profile-upload"
               type="file"
               accept="image/png, image/jpeg"
               onChange={handleImageUpload}
