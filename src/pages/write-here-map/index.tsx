@@ -1,5 +1,6 @@
 import MapContainer from '@/components/level-2/MapContainer';
 import DiaryRegister from '@/components/level-3/DiaryRegister';
+import MarkerSelector from '@/components/level-3/AddPinButton';
 import { useMapStore } from '@/store/Map';
 
 function WriteHereMap() {
@@ -21,6 +22,9 @@ function WriteHereMap() {
         모드 해제
       </button>
       <DiaryRegister />
+
+      {/* 마커 및 색상 선택 UI */}
+      <MarkerSelector />
     </div>
   );
 }
