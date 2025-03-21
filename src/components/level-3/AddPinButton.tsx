@@ -27,19 +27,19 @@ export default function MarkerSelector() {
   const [isOpen, setIsOpen] = useState(false);
   const [isColorPaletteOpen, setIsColorPaletteOpen] = useState(false);
 
-  // ✅ 마커 선택 핸들러 (한 번 클릭하면 바로 적용)
+  //  마커 선택 핸들러 (한 번 클릭하면 바로 적용)
   const handleMarkerSelect = (markerType: string) => {
     setSelectedMarker(markerType);
-    setTempMarkerPath(`${BASE_PATH}${markerType}-${selectedColor}.svg`); // ✅ markerType을 직접 사용
+    setTempMarkerPath(`${BASE_PATH}${markerType}-${selectedColor}.svg`);
   };
 
-  // ✅ 색상 선택 핸들러
+  //  색상 선택 핸들러
   const handleColorSelect = (color: keyof typeof COLOR_MAP) => {
     setSelectedColor(color);
-    setTempMarkerPath(`${BASE_PATH}${selectedMarker}-${color}.svg`); // ✅ selectedColor가 업데이트되기 전에 color를 직접 사용
+    setTempMarkerPath(`${BASE_PATH}${selectedMarker}-${color}.svg`); //  selectedColor가 업데이트되기 전에 color 사용
   };
 
-  // ✅ 미리보기 이미지 경로
+  //  미리보기 이미지 경로
   const previewMarkerPath = `${BASE_PATH}${selectedMarker}-${selectedColor}.svg`;
 
   return (
