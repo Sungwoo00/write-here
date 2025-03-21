@@ -44,7 +44,7 @@ function App() {
             <Route path="/write-here-map" element={<WriteHereMap />} />
             <Route path="/diary" element={<Diary />} />
             <Route path="/public-diary" element={<PublicDiary />} />
-            <Route path="/diary/:id" element={<DiaryDetail />} />{' '}
+            <Route path="/diary/:diary_id" element={<DiaryDetail />} />{' '}
             <Route path="/profile" element={<Profile />} />
             <Route path="/diary-calendar" element={<DiaryCalendar />} />
           </Route>
