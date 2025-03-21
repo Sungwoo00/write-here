@@ -18,16 +18,22 @@ const DEFAULT_MARKER = 'pin-1';
 const DEFAULT_COLOR: keyof typeof COLOR_MAP = 'black';
 
 export default function MarkerSelector() {
-  const { setTempMarkerPath } = useMapStore();
+  const { addMarkerMode, setAddMarkerMode, setTempMarkerPath } = useMapStore();
 
   const [selectedMarker, setSelectedMarker] = useState<string>(DEFAULT_MARKER);
   const [selectedColor, setSelectedColor] =
     useState<keyof typeof COLOR_MAP>(DEFAULT_COLOR);
 
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false); //  마커 선택 팔레트 상태 유지
   const [isColorPaletteOpen, setIsColorPaletteOpen] = useState(false);
 
-  //  마커 선택 핸들러 (한 번 클릭하면 바로 적용)
+  //  플러스 버튼을 눌렀을 때 두 가지 동작을 수행
+  const handleToggle = () => {
+    setAddMarkerMode(!addMarkerMode); //  마커 추가 모드 토글
+    setIsOpen(!isOpen); //  마커 선택 창 토글
+  };
+
+  //  마커 선택 핸들러
   const handleMarkerSelect = (markerType: string) => {
     setSelectedMarker(markerType);
     setTempMarkerPath(`${BASE_PATH}${markerType}-${selectedColor}.svg`);
@@ -36,10 +42,10 @@ export default function MarkerSelector() {
   //  색상 선택 핸들러
   const handleColorSelect = (color: keyof typeof COLOR_MAP) => {
     setSelectedColor(color);
-    setTempMarkerPath(`${BASE_PATH}${selectedMarker}-${color}.svg`); //  selectedColor가 업데이트되기 전에 color 사용
+    setTempMarkerPath(`${BASE_PATH}${selectedMarker}-${color}.svg`);
   };
 
-  //  미리보기 이미지 경로
+  //  미리보기 이미지 경로 설정
   const previewMarkerPath = `${BASE_PATH}${selectedMarker}-${selectedColor}.svg`;
 
   return (
@@ -49,15 +55,17 @@ export default function MarkerSelector() {
         <img src={previewMarkerPath} className="w-10 h-10" alt="선택된 마커" />
       </div>
 
-      {/* 플로팅 버튼 */}
+      {/* 플러스 버튼 (마커 모드 & 마커 선택창 토글) */}
       <motion.button
         type="button"
-        onClick={() => setIsOpen(!isOpen)}
-        animate={{ rotate: isOpen ? 360 : 0 }}
+        onClick={handleToggle} //  플러스 버튼 클릭 시 두 가지 동작 실행
+        animate={{ rotate: addMarkerMode ? 360 : 0 }}
         transition={{ duration: 0.3 }}
-        className="w-14 h-14 bg-green-600 text-white flex items-center justify-center rounded-full shadow-lg z-[1000]"
+        className={`w-14 h-14 flex items-center justify-center rounded-full shadow-lg z-[1000] ${
+          addMarkerMode ? 'bg-green-600' : 'bg-green-600'
+        } text-white`}
       >
-        {isOpen ? <X size={30} /> : <Plus size={30} />}
+        {addMarkerMode ? <Plus size={30} /> : <X size={30} />}
       </motion.button>
 
       {/* 마커 선택 창 */}
@@ -66,7 +74,7 @@ export default function MarkerSelector() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
-          className="absolute bottom-[60px] right-0 bg-white p-1 rounded-full shadow-lg flex flex-col items-center space-y-2"
+          className="absolute bottom-[60px] right-0 bg-white p-2 rounded-xl shadow-lg flex flex-col items-center space-y-2"
         >
           {/* 색상 미리보기 버튼 */}
           <button
