@@ -33,7 +33,7 @@ export default function MarkerSelector() {
   const [isOpen, setIsOpen] = useState(false);
   const [isColorPaletteOpen, setIsColorPaletteOpen] = useState(false);
 
-  // 플러스 버튼 클릭, 마커 모드 & 마커 선택창
+  // 플러스 버튼 클릭 → 마커 모드 & 마커 선택창
   const handleToggle = () => {
     if (!addMarkerMode) {
       setTempMarkerPath(savedPath);
@@ -50,65 +50,67 @@ export default function MarkerSelector() {
     <div className="fixed bottom-10 right-10 flex flex-col items-center z-[1000]">
       {/* 마커 선택 창 */}
       <AnimatePresence>
-      {isOpen && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
+        {isOpen && (
+          <motion.div
+            key="marker-selector"
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: -10 }}
             exit={{ opacity: 0, y: 50 }}
-            transition={{ duration: 0.3 }}
-            className="absolute bottom-0 bg-white w-14 h-[282px] rounded-full shadow-lg flex flex-col items-center py-3 space-y-2"
-            style={{
-              clipPath: 'inset(0 0 10px 0)', // ✅ 플러스 버튼 뒤로 숨김
-              overflow: 'hidden', // ✅ 내부 요소가 플러스 버튼 밖으로 나오지 않게 함
+            transition={{ duration: 0.3, ease: 'easeInOut' }}
+            onAnimationComplete={() => {
+              if (!isOpen) {
+                console.log('Marker selector closed');
+              }
             }}
+            className="absolute bottom-0 bg-white w-14 h-[282px] rounded-full shadow-lg flex flex-col items-center py-3 space-y-2"
           >
-          {/* 색상 미리보기 버튼 */}
-          <button
-            type="button"
+            {/* 색상 미리보기 버튼 */}
+            <button
+              type="button"
               className="w-8 h-8 rounded-full border-2 border-gray-300"
-            style={{ backgroundColor: COLOR_MAP[selectedColor] }}
-            onClick={() => setIsColorPaletteOpen(!isColorPaletteOpen)}
-          ></button>
+              style={{ backgroundColor: COLOR_MAP[selectedColor] }}
+              onClick={() => setIsColorPaletteOpen(!isColorPaletteOpen)}
+            ></button>
 
-          {/* 색상 선택 팔레트 */}
-          {isColorPaletteOpen && (
+            {/* 색상 선택 팔레트 */}
+            {isColorPaletteOpen && (
               <div className="absolute right-[90%] top-0 bg-white p-1 rounded-xl shadow-lg flex flex-col items-center">
-              {Object.entries(COLOR_MAP).map(([colorName, colorCode]) => (
-                <button
-                  key={colorName}
+                {Object.entries(COLOR_MAP).map(([colorName, colorCode]) => (
+                  <button
+                    key={colorName}
                     className="w-6 h-6 rounded-full border-2 border-gray-300"
-                  style={{ backgroundColor: colorCode }}
-                  onClick={() =>
+                    style={{ backgroundColor: colorCode }}
+                    onClick={() =>
                       setSelectedColor(colorName as keyof typeof COLOR_MAP)
-                  }
-                ></button>
+                    }
+                  ></button>
+                ))}
+              </div>
+            )}
+
+            {/* 마커 선택 리스트 */}
+            <div className="flex flex-col items-center gap-0">
+              {MARKER_TYPES.map((marker) => (
+                <button
+                  key={marker}
+                  type="button"
+                  className={`w-9 h-9 flex items-center justify-center ${
+                    selectedMarker === marker
+                      ? 'border-2 border-blue-500 rounded-full'
+                      : ''
+                  }`}
+                  onClick={() => setSelectedMarker(marker)}
+                >
+                  <img
+                    src={`${BASE_PATH}${marker}-${selectedColor}.svg`}
+                    className="w-5 h-5"
+                    alt={marker}
+                  />
+                </button>
               ))}
             </div>
-          )}
-
-          {/* 마커 선택 리스트 */}
-            <div className="flex flex-col items-center gap-0">
-            {MARKER_TYPES.map((marker) => (
-              <button
-                key={marker}
-                type="button"
-                  className={`w-9 h-9 flex items-center justify-center ${
-                  selectedMarker === marker
-                    ? 'border-2 border-blue-500 rounded-full'
-                    : ''
-                }`}
-                  onClick={() => setSelectedMarker(marker)}
-              >
-                <img
-                  src={`${BASE_PATH}${marker}-${selectedColor}.svg`}
-                    className="w-5 h-5"
-                  alt={marker}
-                />
-              </button>
-            ))}
-          </div>
-        </motion.div>
-      )}
+          </motion.div>
+        )}
       </AnimatePresence>
 
       {/* 플러스 버튼 (마커 모드 & 마커 선택창 토글) */}
