@@ -3,8 +3,6 @@ import { motion } from 'framer-motion';
 import { X, Plus } from 'lucide-react';
 import { useMapStore } from '@/store/Map';
 
-const BASE_PATH = '/icons/pins/'; // public 폴더 기준 경로
-const MARKER_TYPES = ['pin-1', 'pin-2', 'pin-3', 'pin-4', 'pin-5'];
 const COLOR_MAP = {
   black: '#000000',
   blue: '#24a9ff',
@@ -13,19 +11,27 @@ const COLOR_MAP = {
   green: '#3ba23f',
 };
 
-// ✅ 기본값: 'pin-1'과 'black'
+const MARKER_TYPES = ['pin-1', 'pin-2', 'pin-3', 'pin-4', 'pin-5'];
+
 export default function MarkerSelector() {
   const [isOpen, setIsOpen] = useState(false);
   const [isColorPaletteOpen, setIsColorPaletteOpen] = useState(false);
-  const { selectedColor, setSelectedColor, selectedMarker, setSelectedMarker } =
-    useMapStore() as {
-      selectedColor: keyof typeof COLOR_MAP;
-      setSelectedColor: (color: keyof typeof COLOR_MAP) => void;
-      selectedMarker: string;
-      setSelectedMarker: (marker: string) => void;
-    };
 
-  // 선택된 값이 없으면 초기값 적용
+  const {
+    selectedColor,
+    setSelectedColor,
+    selectedMarker,
+    setSelectedMarker,
+    selectedMarkerPath,
+  } = useMapStore() as {
+    selectedColor: keyof typeof COLOR_MAP;
+    setSelectedColor: (color: keyof typeof COLOR_MAP) => void;
+    selectedMarker: string;
+    setSelectedMarker: (marker: string) => void;
+    selectedMarkerPath: string;
+  };
+
+  // 초기값 설정
   useEffect(() => {
     if (!selectedMarker) setSelectedMarker('pin-1');
     if (!selectedColor) setSelectedColor('black');
@@ -40,9 +46,6 @@ export default function MarkerSelector() {
   const handleColorSelect = (color: keyof typeof COLOR_MAP) => {
     setSelectedColor(color);
   };
-
-  // 선택한 마커와 색상에 따라 파일명 생성 (초기값 보장)(구현 안됨 왜 안되지)
-  const selectedMarkerPath = `${BASE_PATH}${selectedMarker || 'pin-1'}-${selectedColor || 'black'}.svg`;
 
   return (
     <div className="fixed bottom-10 right-10 flex items-center z-[1000]">
@@ -62,7 +65,7 @@ export default function MarkerSelector() {
         {isOpen ? <X size={30} /> : <Plus size={30} />}
       </motion.button>
 
-      {/*마커 선택 창 */}
+      {/* 마커 선택 창 */}
       {isOpen && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -78,7 +81,7 @@ export default function MarkerSelector() {
             onClick={() => setIsColorPaletteOpen(!isColorPaletteOpen)}
           ></button>
 
-          {/* 색상 선택 팔레트  */}
+          {/* 색상 선택 팔레트 */}
           {isColorPaletteOpen && (
             <div className="absolute right-[120%] top-0 bg-white p-2 rounded-xl shadow-lg flex flex-col items-center space-y-2">
               {Object.entries(COLOR_MAP).map(
@@ -98,30 +101,24 @@ export default function MarkerSelector() {
 
           {/* 마커 선택 리스트 */}
           <div className="flex flex-col items-center space-y-2">
-            {MARKER_TYPES.map((marker, index) => {
-              const markerPath = `${BASE_PATH}${marker}-${selectedColor}.svg`;
-              return (
-                <button
-                  key={index}
-                  type="button"
-                  className={`w-12 h-12 flex items-center justify-center ${
-                    selectedMarker === marker
-                      ? 'border-2 border-blue-500 rounded-full'
-                      : ''
-                  }`}
-                  onClick={() => handleMarkerSelect(marker)}
-                >
-                  <img
-                    src={markerPath}
-                    className="w-8 h-8"
-                    alt={marker}
-                    onError={() =>
-                      console.warn(`⚠️ SVG 파일이 없습니다: ${markerPath}`)
-                    }
-                  />
-                </button>
-              );
-            })}
+            {MARKER_TYPES.map((marker, index) => (
+              <button
+                key={index}
+                type="button"
+                className={`w-12 h-12 flex items-center justify-center ${
+                  selectedMarker === marker
+                    ? 'border-2 border-blue-500 rounded-full'
+                    : ''
+                }`}
+                onClick={() => handleMarkerSelect(marker)}
+              >
+                <img
+                  src={`/icons/pins/${marker}-${selectedColor}.svg`}
+                  className="w-8 h-8"
+                  alt={marker}
+                />
+              </button>
+            ))}
           </div>
         </motion.div>
       )}

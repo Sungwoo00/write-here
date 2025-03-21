@@ -16,7 +16,7 @@ interface MapState {
 
   selectedRegion: string | null;
   setSelectedRegion: (region: string) => void;
-  getProvinceName: () => string | null; //  '도' 정보만 반환하는 함수 추가
+  getProvinceName: () => string | null;
 
   savedMarkers: { lat: number; lon: number; address: string; region: string }[];
   addSavedMarker: (
@@ -33,7 +33,14 @@ interface MapState {
   setSelectedColor: (color: string) => void;
   selectedMarker: string;
   setSelectedMarker: (marker: string) => void;
+
+  selectedMarkerPath: string;
+  updateSelectedMarkerPath: () => void;
 }
+
+const BASE_PATH = '/icons/pins/';
+const DEFAULT_MARKER = 'pin-1';
+const DEFAULT_COLOR = 'black';
 
 export const useMapStore = create<MapState>((set, get) => ({
   map: null,
@@ -51,14 +58,14 @@ export const useMapStore = create<MapState>((set, get) => ({
 
   selectedRegion: null,
   setSelectedRegion: (region) => {
-    const province = region.split(' ')[0]; // '서울특별시 강남구' → '서울특별시'
-    console.log(`🗺 Zustand 업데이트: 선택한 도 - ${province}`);
+    const province = region.split(' ')[0];
+    console.log(` Zustand 업데이트: 선택한 도 - ${province}`);
     set({ selectedRegion: province });
   },
 
   getProvinceName: () => {
     const region = get().selectedRegion;
-    return region ? region.split(' ')[0] : null; //  '도' 정보만 반환
+    return region ? region.split(' ')[0] : null;
   },
 
   savedMarkers: [],
@@ -71,10 +78,22 @@ export const useMapStore = create<MapState>((set, get) => ({
   currentMarker: null,
   setCurrentMarker: (markerInstance) => set({ currentMarker: markerInstance }),
 
-  selectedColor: 'black', // 기본 색상 (검정)
-  setSelectedColor: (color) => set({ selectedColor: color }),
-  selectedMarker: 'pin-1', // 기본 마커
-  setSelectedMarker: (marker) => set({ selectedMarker: marker }),
-}));
+  selectedColor: DEFAULT_COLOR,
+  setSelectedColor: (color) => {
+    set({ selectedColor: color });
+    get().updateSelectedMarkerPath();
+  },
 
-// Removed unused MarkerSelector component and its props
+  selectedMarker: DEFAULT_MARKER,
+  setSelectedMarker: (marker) => {
+    set({ selectedMarker: marker });
+    get().updateSelectedMarkerPath();
+  },
+
+  selectedMarkerPath: `${BASE_PATH}${DEFAULT_MARKER}-${DEFAULT_COLOR}.svg`,
+  updateSelectedMarkerPath: () => {
+    const { selectedMarker, selectedColor } = get();
+    const newPath = `${BASE_PATH}${selectedMarker}-${selectedColor}.svg`;
+    set({ selectedMarkerPath: newPath });
+  },
+}));
