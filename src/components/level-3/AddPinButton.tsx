@@ -1,14 +1,14 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { X, Plus } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Plus } from 'lucide-react';
 import { useMapStore } from '@/store/Map';
 
 const COLOR_MAP = {
   black: '#000000',
   blue: '#24a9ff',
-  red: '#ff5757',
   yellow: '#ffa51d',
   green: '#3ba23f',
+  red: '#ff4d4f',
 };
 
 const MARKER_TYPES = ['pin-1', 'pin-2', 'pin-3', 'pin-4', 'pin-5'];
@@ -17,83 +17,69 @@ const BASE_PATH = '/icons/pins/';
 const DEFAULT_MARKER = 'pin-1';
 const DEFAULT_COLOR: keyof typeof COLOR_MAP = 'black';
 
+const LOGO_GREEN = '#0A8423';
+
 export default function MarkerSelector() {
-  const { addMarkerMode, setAddMarkerMode, setTempMarkerPath } = useMapStore();
+  const { addMarkerMode, setAddMarkerMode, setTempMarkerPath, initTempMarker } =
+    useMapStore();
 
   const [selectedMarker, setSelectedMarker] = useState<string>(DEFAULT_MARKER);
   const [selectedColor, setSelectedColor] =
     useState<keyof typeof COLOR_MAP>(DEFAULT_COLOR);
+  const [savedPath] = useState<string>(
+    `${BASE_PATH}${DEFAULT_MARKER}-${DEFAULT_COLOR}.svg`
+  );
 
-  const [isOpen, setIsOpen] = useState(false); //  마커 선택 팔레트 상태 유지
+  const [isOpen, setIsOpen] = useState(false);
   const [isColorPaletteOpen, setIsColorPaletteOpen] = useState(false);
 
-  //  플러스 버튼을 눌렀을 때 두 가지 동작을 수행
+  // 플러스 버튼 클릭, 마커 모드 & 마커 선택창
   const handleToggle = () => {
-    setAddMarkerMode(!addMarkerMode); //  마커 추가 모드 토글
-    setIsOpen(!isOpen); //  마커 선택 창 토글
+    if (!addMarkerMode) {
+      setTempMarkerPath(savedPath);
+      console.log(' Restoring saved path:', savedPath);
+    } else {
+      initTempMarker();
+      console.log(' Marker reset:', useMapStore.getState().tempMarker);
+    }
+    setAddMarkerMode(!addMarkerMode);
+    setIsOpen(!isOpen);
   };
-
-  //  마커 선택 핸들러
-  const handleMarkerSelect = (markerType: string) => {
-    setSelectedMarker(markerType);
-    setTempMarkerPath(`${BASE_PATH}${markerType}-${selectedColor}.svg`);
-  };
-
-  //  색상 선택 핸들러
-  const handleColorSelect = (color: keyof typeof COLOR_MAP) => {
-    setSelectedColor(color);
-    setTempMarkerPath(`${BASE_PATH}${selectedMarker}-${color}.svg`);
-  };
-
-  //  미리보기 이미지 경로 설정
-  const previewMarkerPath = `${BASE_PATH}${selectedMarker}-${selectedColor}.svg`;
 
   return (
-    <div className="fixed bottom-10 right-10 flex items-center z-[1000]">
-      {/* 미리보기 */}
-      <div className="flex items-center space-x-2">
-        <img src={previewMarkerPath} className="w-10 h-10" alt="선택된 마커" />
-      </div>
-
-      {/* 플러스 버튼 (마커 모드 & 마커 선택창 토글) */}
-      <motion.button
-        type="button"
-        onClick={handleToggle} //  플러스 버튼 클릭 시 두 가지 동작 실행
-        animate={{ rotate: addMarkerMode ? 360 : 0 }}
-        transition={{ duration: 0.3 }}
-        className={`w-14 h-14 flex items-center justify-center rounded-full shadow-lg z-[1000] ${
-          addMarkerMode ? 'bg-green-600' : 'bg-green-600'
-        } text-white`}
-      >
-        {addMarkerMode ? <Plus size={30} /> : <X size={30} />}
-      </motion.button>
-
+    <div className="fixed bottom-10 right-10 flex flex-col items-center z-[1000]">
       {/* 마커 선택 창 */}
+      <AnimatePresence>
       {isOpen && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-          className="absolute bottom-[60px] right-0 bg-white p-2 rounded-xl shadow-lg flex flex-col items-center space-y-2"
-        >
+            animate={{ opacity: 1, y: -10 }}
+            exit={{ opacity: 0, y: 50 }}
+            transition={{ duration: 0.3 }}
+            className="absolute bottom-0 bg-white w-14 h-[282px] rounded-full shadow-lg flex flex-col items-center py-3 space-y-2"
+            style={{
+              clipPath: 'inset(0 0 10px 0)', // ✅ 플러스 버튼 뒤로 숨김
+              overflow: 'hidden', // ✅ 내부 요소가 플러스 버튼 밖으로 나오지 않게 함
+            }}
+          >
           {/* 색상 미리보기 버튼 */}
           <button
             type="button"
-            className="w-10 h-10 rounded-full border-2 border-gray-300"
+              className="w-8 h-8 rounded-full border-2 border-gray-300"
             style={{ backgroundColor: COLOR_MAP[selectedColor] }}
             onClick={() => setIsColorPaletteOpen(!isColorPaletteOpen)}
           ></button>
 
           {/* 색상 선택 팔레트 */}
           {isColorPaletteOpen && (
-            <div className="absolute right-[120%] top-0 bg-white p-2 rounded-xl shadow-lg flex flex-col items-center space-y-2">
+              <div className="absolute right-[90%] top-0 bg-white p-1 rounded-xl shadow-lg flex flex-col items-center">
               {Object.entries(COLOR_MAP).map(([colorName, colorCode]) => (
                 <button
                   key={colorName}
-                  className="w-8 h-8 rounded-full border-2 border-gray-300"
+                    className="w-6 h-6 rounded-full border-2 border-gray-300"
                   style={{ backgroundColor: colorCode }}
                   onClick={() =>
-                    handleColorSelect(colorName as keyof typeof COLOR_MAP)
+                      setSelectedColor(colorName as keyof typeof COLOR_MAP)
                   }
                 ></button>
               ))}
@@ -101,21 +87,21 @@ export default function MarkerSelector() {
           )}
 
           {/* 마커 선택 리스트 */}
-          <div className="flex flex-col items-center space-y-2">
+            <div className="flex flex-col items-center gap-0">
             {MARKER_TYPES.map((marker) => (
               <button
                 key={marker}
                 type="button"
-                className={`w-12 h-12 flex items-center justify-center ${
+                  className={`w-9 h-9 flex items-center justify-center ${
                   selectedMarker === marker
                     ? 'border-2 border-blue-500 rounded-full'
                     : ''
                 }`}
-                onClick={() => handleMarkerSelect(marker)}
+                  onClick={() => setSelectedMarker(marker)}
               >
                 <img
                   src={`${BASE_PATH}${marker}-${selectedColor}.svg`}
-                  className="w-8 h-8"
+                    className="w-5 h-5"
                   alt={marker}
                 />
               </button>
@@ -123,6 +109,19 @@ export default function MarkerSelector() {
           </div>
         </motion.div>
       )}
+      </AnimatePresence>
+
+      {/* 플러스 버튼 (마커 모드 & 마커 선택창 토글) */}
+      <motion.button
+        type="button"
+        onClick={handleToggle}
+        animate={{ rotate: addMarkerMode ? 45 : 0 }}
+        transition={{ duration: 0.3 }}
+        className="w-13 h-13 flex items-center justify-center rounded-full shadow-lg text-white absolute bottom-[-15px]"
+        style={{ backgroundColor: LOGO_GREEN, bottom: '0px' }}
+      >
+        <Plus size={32} />
+      </motion.button>
     </div>
   );
 }
