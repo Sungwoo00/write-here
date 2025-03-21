@@ -13,6 +13,7 @@ interface MapState {
 
   addMarkerMode: boolean | null;
   setAddMarkerMode: (state: boolean) => void;
+  initTempMarker: () => void;
 
   tempMarker: TempMarker;
   setTempMarkerPath: (marker_path: string) => void;
