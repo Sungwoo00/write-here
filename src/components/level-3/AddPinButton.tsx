@@ -47,22 +47,17 @@ export default function MarkerSelector() {
   };
 
   return (
-    <div className="fixed bottom-10 right-10 flex flex-col items-center z-[1000]">
+    <div className="absolute bottom-5 right-5 flex flex-col items-center z-[100]">
       {/* 마커 선택 창 */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
             key="marker-selector"
             initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: -10 }}
-            exit={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
             transition={{ duration: 0.3, ease: 'easeInOut' }}
-            onAnimationComplete={() => {
-              if (!isOpen) {
-                console.log('Marker selector closed');
-              }
-            }}
-            className="absolute bottom-0 bg-white w-14 h-[282px] rounded-full shadow-lg flex flex-col items-center py-3 space-y-2"
+            className="absolute bottom-14 bg-white w-14 h-[282px] rounded-full shadow-lg flex flex-col items-center py-3 space-y-2"
           >
             {/* 색상 미리보기 버튼 */}
             <button
@@ -119,8 +114,8 @@ export default function MarkerSelector() {
         onClick={handleToggle}
         animate={{ rotate: addMarkerMode ? 45 : 0 }}
         transition={{ duration: 0.3 }}
-        className="w-13 h-13 flex items-center justify-center rounded-full shadow-lg text-white absolute bottom-[-15px]"
-        style={{ backgroundColor: LOGO_GREEN, bottom: '0px' }}
+        className="w-13 h-13 flex items-center justify-center rounded-full shadow-lg text-white"
+        style={{ backgroundColor: LOGO_GREEN }}
       >
         <Plus size={32} />
       </motion.button>
