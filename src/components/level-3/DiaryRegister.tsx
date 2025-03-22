@@ -1,11 +1,13 @@
-import DiaryPlaceTypeSelector from '../level-2/DiaryPlaceTypeSelector';
-import DiaryInput from '../level-1/DiaryInput';
-import { useState } from 'react';
-import DiaryDateSelector from '../level-2/DiaryDateSelector';
-import SubmitButton from '../level-1/SubmitButton';
-import ImageSwiper from '../level-2/ImageSwiper';
+import DiaryPlaceTypeSelector from '@/components/level-2/DiaryPlaceTypeSelector';
+import DiaryInput from '@/components/level-1/DiaryInput';
+import { FormEvent, useEffect, useState } from 'react';
+import DiaryDateSelector from '@/components/level-2/DiaryDateSelector';
+import SubmitButton from '@/components/level-1/SubmitButton';
+import ImageSwiper from '@/components/level-2/ImageSwiper';
 import supabase from '@/utils/supabase';
-import { getUserId } from '@/utils/auth';
+import useTableStore from '@/store/DiaryData';
+import TogglePublicButton from '@/components/level-1/TogglePublcButton';
+import { useMapStore } from '@/store/Map';
 
 function DiaryRegister() {
   const [placeText, setPlaceText] = useState('');
@@ -14,7 +16,12 @@ function DiaryRegister() {
   const [contentText, setContentText] = useState('');
   const [tagText, setTagText] = useState('');
   const [date, setDate] = useState(new Date());
-  const [loading, setLoading] = useState(false);
+  const [_, setLoading] = useState(false);
+  const [isPublic, setIsPublic] = useState(true);
+  const { tempMarker, initTempMarker } = useMapStore();
+
+  const addMarker = useTableStore((state) => state.addMarker);
+  const addDiary = useTableStore((state) => state.addDiary);
 
   const handlePlaceChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -57,6 +64,55 @@ function DiaryRegister() {
     setDate(value);
   };
 
+  useEffect(() => {
+    if (tempMarker.region) {
+      setPlaceText(tempMarker.region);
+    }
+  }, [tempMarker.region]);
+
+  const uploadMarker = async () => {
+    try {
+      if (!tempMarker.lat || !tempMarker.lon || !tempMarker.marker_path) {
+        return null;
+      }
+
+      const { data: userData } = await supabase.auth.getUser();
+      const userId = userData.user?.id;
+
+      if (!userId) {
+        throw new Error('사용자 정보를 찾을 수 없습니다.');
+      }
+
+      const markerData = {
+        user_id: userId,
+        lat: tempMarker.lat,
+        lon: tempMarker.lon,
+        marker_path: tempMarker.marker_path,
+        region: tempMarker.region,
+      };
+
+      const { data, error } = await supabase
+        .from('markers')
+        .insert(markerData)
+        .select()
+        .single();
+
+      if (error) {
+        console.error('마커 저장 오류:', error);
+        throw error;
+      }
+
+      if (data) {
+        addMarker(data);
+      }
+
+      return data;
+    } catch (error) {
+      console.error('마커 업로드 오류:', error);
+      return null;
+    }
+  };
+
   const uploadImage = async (
     imageUrl: string,
     userId: string,
@@ -71,7 +127,7 @@ function DiaryRegister() {
         const fileType = blob.type.split('/')[1] || 'jpg';
         const filePath = `${userId}/${diaryId}/${index}.${fileType}`;
 
-        const { data, error } = await supabase.storage
+        const { error } = await supabase.storage
           .from('diary-images')
           .upload(filePath, blob, {
             contentType: blob.type || 'image/jpeg',
@@ -94,10 +150,11 @@ function DiaryRegister() {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+  const createDiary = async () => {
     try {
+      const markerData = await uploadMarker();
+      const marker_id = markerData?.marker_id;
+
       const diaryData = {
         title: titleText,
         place: placeText,
@@ -105,51 +162,68 @@ function DiaryRegister() {
         content: contentText,
         post_date: date.toISOString(),
         tag: parseTagsToArray(tagText),
-        is_public: true,
+        is_public: isPublic,
+        marker_id: marker_id,
       };
 
       const { data, error } = await supabase
         .from('diaries')
         .insert(diaryData)
-        .select('diary_id')
+        .select('*')
         .single();
 
       if (error) {
+        console.error('Supabase 에러:', error);
         throw new Error(error.message);
       }
       alert('다이어리 저장완료');
+
       const diaryId = data?.diary_id;
 
       const { data: userData } = await supabase.auth.getUser();
       const userId = userData.user?.id;
-
-      if (!userId) {
-        throw new Error('사용자 인증 정보를 찾을 수 없습니다.');
-      }
 
       const imageElements = document.querySelectorAll('.swiper-slide img');
       const tempImageUrls = Array.from(imageElements).map(
         (img) => (img as HTMLImageElement).src
       );
 
-      const uploadPromises = tempImageUrls.map((imageUrl, index) =>
-        uploadImage(imageUrl, userId, diaryId, index)
-      );
+      if (diaryId && userId) {
+        const uploadPromises = tempImageUrls.map((imageUrl, index) =>
+          uploadImage(imageUrl, userId, diaryId, index)
+        );
+        const result = await Promise.all(uploadPromises);
+        initTempMarker();
 
-      const uploadedImageUrls = await Promise.all(uploadPromises);
-
-      alert('이미지 저장완료');
+        return { ...data, img: result };
+      }
     } catch (error) {
-      console.error('다이어리 저장 실패:', error);
-      alert('업로드 실패');
+      alert('업로드 실패했습니다');
     } finally {
       setLoading(false);
     }
   };
 
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    const newDiary = await createDiary();
+    if (newDiary) {
+      addDiary(newDiary);
+    }
+  };
+
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4 min-w-3/4">
+    <form
+      onSubmit={handleSubmit}
+      className="flex flex-col gap-4 min-w-3/4 mb-24"
+    >
       <ImageSwiper />
+      <TogglePublicButton
+        isPublic={isPublic}
+        onChange={setIsPublic}
+        className="my-4"
+      />
       <DiaryInput
         type="input"
         text={placeText}
