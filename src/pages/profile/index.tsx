@@ -3,6 +3,7 @@ import supabase from '@/utils/supabase';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ProfileStatus from './../../components/level-2/ProfileStatus';
+import MyDiaryStats from '@/components/level-2/ProfileRecord'; // ✅ 추가
 
 function Profile() {
   const navigate = useNavigate();
@@ -43,36 +44,42 @@ function Profile() {
   };
 
   return (
-      <>
-        <ProfileStatus/>
-        <div className="flex-grow flex flex-col font-[HSSanTokki]">
-          <button
-            type="button"
-            className="text-[var(--icon-red)] hover:underline cursor-pointer"
-            onClick={handleSignOutClick}
-          >
-            로그아웃
-          </button>
-          <button
-            type="button"
-            className="text-[var(--icon-red)] hover:underline cursor-pointer"
-            onClick={handleDeleteUserClick}
-          >
-            회원탈퇴
-          </button>
-          <Modal
-            isOpen={isModalOpen}
-            buttonConfirmText="확인"
-            buttonCancelText="취소"
-            onConfirm={onConfirm}
-            onClose={() => setIsModalOpen(false)}
-          >
-            <p className="min-h-15 mt-2 text-[var(--dark-gray)] text-center">
-              {modalMsg}
-            </p>
-          </Modal>
-        </div>
-      </>
+    <>
+      <ProfileStatus />
+
+      {/* ✅ MyDiaryStats 컴포넌트 추가 */}
+      <div className="mb-6">
+        <MyDiaryStats />
+      </div>
+
+      <div className="flex-grow flex flex-col font-[HSSanTokki]">
+        <button
+          type="button"
+          className="text-[var(--icon-red)] hover:underline cursor-pointer"
+          onClick={handleSignOutClick}
+        >
+          로그아웃
+        </button>
+        <button
+          type="button"
+          className="text-[var(--icon-red)] hover:underline cursor-pointer"
+          onClick={handleDeleteUserClick}
+        >
+          회원탈퇴
+        </button>
+        <Modal
+          isOpen={isModalOpen}
+          buttonConfirmText="확인"
+          buttonCancelText="취소"
+          onConfirm={onConfirm}
+          onClose={() => setIsModalOpen(false)}
+        >
+          <p className="min-h-15 mt-2 text-[var(--dark-gray)] text-center">
+            {modalMsg}
+          </p>
+        </Modal>
+      </div>
+    </>
   );
 }
 
