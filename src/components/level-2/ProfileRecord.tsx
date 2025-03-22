@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import useTableStore from '@/store/DiaryData';
-import { PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
+import { PieChart, Pie, Cell, Tooltip } from 'recharts';
 
 const COLORS = [
   '#00C49F',
@@ -9,9 +9,7 @@ const COLORS = [
   '#FF6384',
   '#FF8042',
   '#A28DFF',
-  '#FF99C8',
-  '#C0CA33',
-]; // ✅ 다양한 색상 추가
+];
 
 const ProfileRecord = () => {
   const markers = useTableStore((state) => state.markers);
@@ -31,7 +29,7 @@ const ProfileRecord = () => {
     const regionCount = {};
 
     markers.forEach((marker) => {
-      const region = marker.region || '기타'; // ✅ region이 없으면 "기타"로 저장
+      const region = marker.region || '기타';
       if (regionCount[region]) {
         regionCount[region] += 1;
       } else {
@@ -43,21 +41,18 @@ const ProfileRecord = () => {
   };
 
   return (
-    <div className="p-4 bg-white rounded-lg shadow-md">
-      <h2 className="text-lg font-bold">나의 여기 적기 기록 📌</h2>
-
-      <div className="flex justify-center mt-4">
-        <PieChart width={300} height={300}>
+    <div className="p-6 bg-white rounded-2xl shadow-md flex items-center space-x-8">
+      {/* 원형 차트 */}
+      <div className="relative">
+        <PieChart width={200} height={200}>
           <Pie
             data={regionStats}
             cx="50%"
             cy="50%"
-            outerRadius={100}
+            innerRadius={60}
+            outerRadius={80}
             fill="#8884d8"
             dataKey="value"
-            label={({ name, percent }) =>
-              `${name} ${(percent * 100).toFixed(1)}%`
-            }
           >
             {regionStats.map((entry, index) => (
               <Cell
@@ -67,25 +62,40 @@ const ProfileRecord = () => {
             ))}
           </Pie>
           <Tooltip />
-          <Legend />
         </PieChart>
+
+        {/* 중앙 텍스트 */}
+        <div className="absolute top-[50%] left-[50%] transform -translate-x-[50%] -translate-y-[50%] text-center">
+          <p className="text-gray-500 text-sm">작성한 기록</p>
+          <p className="text-2xl font-bold">{markers.length}</p>
+        </div>
       </div>
 
-      <div className="mt-4">
-        <table className="w-full text-sm text-left">
+      {/* 지역 통계 테이블 */}
+      <div className="flex-1">
+        <h2 className="text-xl font-bold flex items-center space-x-2">
+          나의 여기 적기 기록 ✏️
+        </h2>
+        <table className="w-full mt-4 text-sm">
           <thead>
             <tr className="text-gray-600 border-b">
-              <th className="py-1">지역</th>
-              <th className="py-1">일기</th>
-              <th className="py-1">%</th>
+              <th className="py-1 text-left">지역</th>
+              <th className="py-1 text-right">일기</th>
+              <th className="py-1 text-right">%</th>
             </tr>
           </thead>
           <tbody>
-            {regionStats.map((region) => (
+            {regionStats.map((region, index) => (
               <tr key={region.name} className="border-t">
-                <td className="py-1">{region.name}</td>
-                <td className="py-1">{region.value}</td>
-                <td className="py-1">
+                <td className="py-2 flex items-center space-x-2">
+                  <span
+                    className="w-3 h-3 rounded-full inline-block"
+                    style={{ backgroundColor: COLORS[index % COLORS.length] }}
+                  />
+                  {region.name}
+                </td>
+                <td className="py-2 text-right">{region.value}</td>
+                <td className="py-2 text-right">
                   {((region.value / markers.length) * 100).toFixed(1)}%
                 </td>
               </tr>
