@@ -4,9 +4,6 @@ import { Marker } from './DiaryData';
 type TempMarker = Omit<Marker, 'diary_id' | 'user_id'>;
 
 interface MapState {
-  initialLocation: { lat: number; lon: number } | null;
-  setInitialLocation: (lat: number, lon: number) => void;
-
   currentLat: number;
   currentLon: number;
   setCurrentLocation: (lat: number, lon: number) => void;
@@ -27,10 +24,7 @@ interface MapState {
   setCurrentMarker: (markerInstance: unknown) => void;
 }
 
-export const useMapStore = create<MapState>((set, get) => ({
-  initialLocation: null,
-  setInitialLocation: (lat, lon) => set({ initialLocation: { lat, lon } }),
-
+export const useMapStore = create<MapState>((set) => ({
   currentLat: 37.5665,
   currentLon: 126.978,
   setCurrentLocation: (lat, lon) => set({ currentLat: lat, currentLon: lon }),
@@ -41,7 +35,7 @@ export const useMapStore = create<MapState>((set, get) => ({
   tempMarker: {
     lat: 0,
     lon: 0,
-    marker_path: '/icons/pins/pin-1-black.svg',
+    marker_path: '',
     region: '',
   },
   setTempMarkerPath: (path) => {

@@ -45,6 +45,7 @@ interface TableState {
   fetchProfiles: (userId: string) => Promise<void>;
   fetchAllTables: (userId: string) => Promise<void>;
   addDiary: (diary: Diary) => void;
+  addMarker: (marker: Marker) => void;
 }
 
 const useTableStore = create<TableState>()(
@@ -112,6 +113,12 @@ const useTableStore = create<TableState>()(
             },
           }));
         }
+      },
+
+      addMarker: (marker: Marker) => {
+        set((state) => ({
+          markers: [...state.markers, marker],
+        }));
       },
 
       addDiary: (diary: Diary) => {
