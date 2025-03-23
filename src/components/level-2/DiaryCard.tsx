@@ -5,6 +5,7 @@ import LikeToggle from '@/components/level-1/LikeToggle';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Diary } from '@/store/DiaryData';
+
 interface DiaryCardProps {
   diary: Diary;
 }
@@ -47,22 +48,33 @@ const DiaryCard = ({ diary }: DiaryCardProps) => {
     <div
       role="button"
       tabIndex={0}
-      className="m-6 cursor-pointer text-left focus:outline-none"
+      className={tm(
+        'm-6 cursor-pointer text-left focus:outline-none',
+        'transition-transform duration-200 hover:scale-[1.015]'
+      )}
       onClick={handleCardClick}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') handleCardClick();
       }}
     >
-      <div className="w-[366px] h-[277px] lg:h-[295px] lg:w-[370px] bg-white rounded-2xl shadow-md overflow-hidden">
+      <div
+        className={tm(
+          'w-[366px] h-[277px] lg:h-[295px] lg:w-[370px] bg-white rounded-2xl shadow-md overflow-hidden',
+          'hover:shadow-lg transition-shadow duration-200'
+        )}
+      >
         {/* 이미지 배경 */}
         <div
           className={tm(
-            'relative w-full h-[157px] bg-cover bg-center rounded-t-2xl'
+            'relative w-full h-[157px] bg-cover bg-center rounded-t-2xl group'
           )}
           style={{
             backgroundImage: `url(${diary.img?.[0] || IMAGE_PATHS.blueBottle})`,
           }}
         >
+          {/* 다크 오버레이 효과 */}
+          <div className="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition-colors duration-200 rounded-t-2xl" />
+
           <div
             role="button"
             tabIndex={0}
@@ -84,7 +96,7 @@ const DiaryCard = ({ diary }: DiaryCardProps) => {
           )}
         >
           <div className="flex justify-between items-center w-full">
-            <h2 className="font-[HSSanTokki] truncate max-w-[70%] text-base lg:text-lg">
+            <h2 className="font-[HSSanTokki] truncate max-w-[70%] text-base lg:text-lg transition-colors duration-200 group-hover:text-white">
               {diary.title}
             </h2>
             <span className="whitespace-nowrap text-xs lg:text-base">
