@@ -10,7 +10,15 @@ import TogglePublicButton from '@/components/level-1/TogglePublcButton';
 import { useMapStore } from '@/store/Map';
 
 function DiaryRegister() {
-  const [placeText, setPlaceText] = useState('');
+  const {
+    tempMarker,
+    initialPlace,
+    initTempMarker,
+    setAddMarkerMode,
+    closeOverlay,
+  } = useMapStore();
+
+  const [placeText, setPlaceText] = useState(initialPlace);
   const [placeType, setPlaceType] = useState('');
   const [titleText, setTitleText] = useState('');
   const [contentText, setContentText] = useState('');
@@ -18,7 +26,6 @@ function DiaryRegister() {
   const [date, setDate] = useState(new Date());
   const [_, setLoading] = useState(false);
   const [isPublic, setIsPublic] = useState(true);
-  const { tempMarker, initTempMarker } = useMapStore();
 
   const addMarker = useTableStore((state) => state.addMarker);
   const addDiary = useTableStore((state) => state.addDiary);
@@ -206,6 +213,9 @@ function DiaryRegister() {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    closeOverlay();
+    setAddMarkerMode(false);
+    initTempMarker();
     setLoading(true);
     const newDiary = await createDiary();
     if (newDiary) {
@@ -219,11 +229,12 @@ function DiaryRegister() {
       className="flex flex-col gap-4 min-w-3/4 mb-24"
     >
       <ImageSwiper />
-      <TogglePublicButton
-        isPublic={isPublic}
-        onChange={setIsPublic}
-        className="my-4"
-      />
+
+      <div className="flex">
+        <DiaryDateSelector date={date} onDateChange={handleChangeDate} />
+
+        <TogglePublicButton isPublic={isPublic} onChange={setIsPublic} />
+      </div>
       <DiaryInput
         type="input"
         text={placeText}
@@ -245,8 +256,6 @@ function DiaryRegister() {
         label="내용을 입력해주세요"
         onChange={handleContentChange}
       />
-
-      <DiaryDateSelector date={date} onDateChange={handleChangeDate} />
 
       <DiaryInput
         type="input"
