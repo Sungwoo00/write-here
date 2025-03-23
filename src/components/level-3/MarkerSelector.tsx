@@ -15,26 +15,30 @@ const BASE_PATH = '/icons/pins/';
 const DEFAULT_COLOR: keyof typeof COLOR_MAP = 'black';
 
 export default function MarkerSelector() {
-  const { addMarkerMode, setAddMarkerMode, setTempMarkerPath, initTempMarker } =
-    useMapStore();
-
+  const {
+    addMarkerMode,
+    setAddMarkerMode,
+    setTempMarkerPath,
+    initTempMarker,
+    setPageModalOpen,
+    isOverlayOpen,
+  } = useMapStore();
   const [selectedMarker, setSelectedMarker] = useState<string>(MARKER_TYPES[0]);
   const [selectedColor, setSelectedColor] =
     useState<keyof typeof COLOR_MAP>(DEFAULT_COLOR);
 
-  const [isOpen, setIsOpen] = useState(false);
   const [isColorPaletteOpen, setIsColorPaletteOpen] = useState(false);
 
   const handleToggle = () => {
-    if (!isOpen) {
+    if (!addMarkerMode) {
       setAddMarkerMode(true);
       setTempMarkerPath(`${BASE_PATH}${selectedMarker}-${selectedColor}.svg`);
+    } else if (isOverlayOpen) {
+      setPageModalOpen(true);
     } else {
       initTempMarker();
       setAddMarkerMode(false);
     }
-    setAddMarkerMode(!addMarkerMode);
-    setIsOpen((prevState) => !prevState);
   };
 
   useEffect(() => {
@@ -49,10 +53,10 @@ export default function MarkerSelector() {
   }, [selectedMarker, selectedColor, setTempMarkerPath, setAddMarkerMode]);
 
   return (
-    <div className="fixed bottom-10 right-10 flex flex-col items-center z-[1000]">
+    <div className="absolute right-12 bottom-5 z-10 flex flex-col items-center">
       {/* 마커 선택 창 */}
       <AnimatePresence>
-        {isOpen && (
+        {addMarkerMode && (
           <motion.div
             key="marker-selector"
             initial={{ opacity: 0, y: 20 }}
@@ -60,7 +64,7 @@ export default function MarkerSelector() {
             exit={{ opacity: 0, y: 50 }}
             transition={{ duration: 0.3, ease: 'easeInOut' }}
             onAnimationComplete={() => {
-              if (!isOpen) {
+              if (!addMarkerMode) {
                 console.log('Marker selector closed');
               }
             }}
