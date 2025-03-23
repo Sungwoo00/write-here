@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useMapStore } from '@/store/Map';
+import toast from 'react-hot-toast'; // ✅ 추가
 
 const COLOR_MAP = {
   black: '#000000',
@@ -31,6 +32,8 @@ export default function MarkerSelector() {
 
   const handleToggle = () => {
     if (!addMarkerMode) {
+      toast.error('일기를 작성하려면 마커를 찍은 후 해당 마커를 클릭하세요');
+
       setAddMarkerMode(true);
       setTempMarkerPath(`${BASE_PATH}${selectedMarker}-${selectedColor}.svg`);
     } else if (isOverlayOpen) {
@@ -54,7 +57,6 @@ export default function MarkerSelector() {
 
   return (
     <div className="absolute right-12 bottom-5 z-10 flex flex-col items-center">
-      {/* 마커 선택 창 */}
       <AnimatePresence>
         {addMarkerMode && (
           <motion.div
@@ -63,14 +65,8 @@ export default function MarkerSelector() {
             animate={{ opacity: 1, y: -10 }}
             exit={{ opacity: 0, y: 50 }}
             transition={{ duration: 0.3, ease: 'easeInOut' }}
-            onAnimationComplete={() => {
-              if (!addMarkerMode) {
-                console.log('Marker selector closed');
-              }
-            }}
             className="absolute bottom-0 bg-white w-14 h-[282px] rounded-full shadow-lg flex flex-col items-center py-3 space-y-2"
           >
-            {/* 색상 미리보기 버튼 */}
             <button
               type="button"
               className="w-8 h-8 rounded-full border-2 border-gray-300"
@@ -78,7 +74,6 @@ export default function MarkerSelector() {
               onClick={() => setIsColorPaletteOpen(!isColorPaletteOpen)}
             ></button>
 
-            {/* 색상 선택 팔레트 */}
             {isColorPaletteOpen && (
               <div className="absolute right-[90%] top-0 bg-white p-1 rounded-xl shadow-lg flex flex-col items-center">
                 {Object.entries(COLOR_MAP).map(([colorName, colorCode]) => (
@@ -94,7 +89,6 @@ export default function MarkerSelector() {
               </div>
             )}
 
-            {/* 마커 선택 리스트 */}
             <div className="flex flex-col items-center gap-0">
               {MARKER_TYPES.map((marker) => (
                 <button
