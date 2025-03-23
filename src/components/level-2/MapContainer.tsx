@@ -1,11 +1,15 @@
-import { useEffect, useRef } from 'react';
-import { Marker } from '@/components/level-2/Marker';
+import { useEffect, useRef, useState } from 'react';
+import DrawMarker from '@/components/level-2/DrawMarker';
 import { useMapStore } from '@/store/Map';
+import useTableStore from '@/store/DiaryData';
+import Modal from '@/components/level-2/Modal';
+import MarkerSelector from '@/components/level-3/MarkerSelector';
 
 const LocationIcon = '/icons/icon-gps.svg';
 
 function MapContainer() {
   const {
+    tempMarker,
     setTempMarkerLocation,
     setTempMarkerRegion,
     setInitialPlace,
@@ -15,8 +19,11 @@ function MapContainer() {
     addMarkerMode,
     setAddMarkerMode,
   } = useMapStore();
-
+  const { markers } = useTableStore();
   const mapRef = useRef<kakao.maps.Map | null>(null);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMsg, setModalMsg] = useState('');
 
   useEffect(() => {
     const initMap = () => {
@@ -41,14 +48,19 @@ function MapContainer() {
     } else {
       window.kakao.maps.load(initMap);
     }
+    return () => {
+      if (mapRef.current) {
+        const latlng = mapRef.current.getCenter();
+        setCurrentLocation(latlng.getLat(), latlng.getLng());
+      }
+    };
   }, [currentLat, currentLon, setCurrentLocation]);
+
   useEffect(() => {
     const handleAddMarker = (mouseEvent: kakao.maps.event.MouseEvent) => {
       const latlng = mouseEvent.latLng;
-      const lat = latlng.getLat();
       const lon = latlng.getLng();
-      //콘솔로그 지울예정
-      console.log(lat, lon);
+      const lat = latlng.getLat();
       const geocoder = new window.kakao.maps.services.Geocoder();
       geocoder.coord2Address(
         lon,
@@ -61,15 +73,15 @@ function MapContainer() {
         ) => {
           if (status === kakao.maps.services.Status.OK) {
             const { address_name, region_1depth_name } = result[0].address;
-            //콘솔로그 지울예정
-            console.log(region_1depth_name);
             setInitialPlace(address_name);
             setTempMarkerRegion(region_1depth_name);
+            setTempMarkerLocation(lat, lon);
+          } else {
+            setModalMsg('마커는 국내 육지에만 생성 가능합니다');
+            setIsModalOpen(true);
           }
         }
       );
-      setTempMarkerLocation(lat, lon);
-      //마커 찍히고 레지스터 페이지 올라오게 만들어야함
     };
     if (mapRef.current && addMarkerMode) {
       kakao.maps.event.addListener(mapRef.current, 'click', handleAddMarker);
@@ -87,6 +99,7 @@ function MapContainer() {
   }, [
     addMarkerMode,
     setAddMarkerMode,
+    setCurrentLocation,
     setInitialPlace,
     setTempMarkerLocation,
     setTempMarkerRegion,
@@ -108,62 +121,48 @@ function MapContainer() {
     }
   };
 
-  return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        width: '100%',
-        maxWidth: '1400px',
-        padding: '0 16px',
-      }}
-    >
-      <div
-        style={{
-          position: 'relative',
-          width: '100%',
-          height: '700px',
-        }}
-      >
-        <div
-          id="map"
-          style={{
-            width: '100%',
-            height: '100%',
-            borderRadius: '10px',
-            boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
-          }}
-        ></div>
+  const handleModalButtonClick = () => {
+    setIsModalOpen(false);
+  };
 
-        <button
-          onClick={goToCurrentLocation}
-          style={{
-            position: 'absolute',
-            bottom: '30px',
-            left: '10px',
-            background: 'white',
-            border: 'none',
-            cursor: 'pointer',
-            width: '40px',
-            height: '40px',
-            borderRadius: '50%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 10,
-            boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)',
-          }}
-        >
-          <img
-            src={LocationIcon}
-            alt="현재 위치 아이콘"
-            style={{ width: '24px', height: '24px' }}
+  return (
+    <div className="flex flex-col items-center justify-center w-full h-screen relative">
+      <div id="map" className="w-full h-full"></div>
+      <button
+        onClick={goToCurrentLocation}
+        className="absolute bottom-5 left-5 bg-white border-none cursor-pointer 
+          w-10 h-10 rounded-full flex items-center justify-center z-10 
+          shadow-md"
+      >
+        <img
+          src={LocationIcon}
+          alt="현재 위치 아이콘"
+          style={{ width: '24px', height: '24px' }}
+        />
+      </button>
+      <MarkerSelector />
+      {mapRef.current && addMarkerMode && (
+        <DrawMarker map={mapRef.current} marker={tempMarker} />
+      )}
+      {mapRef.current &&
+        markers.map((marker) => (
+          <DrawMarker
+            key={marker.marker_id}
+            map={mapRef.current}
+            marker={marker}
           />
-        </button>
-        {mapRef.current && addMarkerMode && <Marker map={mapRef.current} />}
-      </div>
+        ))}
+      <Modal
+        isOpen={isModalOpen}
+        buttonConfirmText="확인"
+        buttonCancelText="닫기"
+        onConfirm={handleModalButtonClick}
+        onClose={handleModalButtonClick}
+      >
+        <p className="min-h-15 mt-2 text-[var(--dark-gray)] text-center">
+          {modalMsg}
+        </p>
+      </Modal>
     </div>
   );
 }

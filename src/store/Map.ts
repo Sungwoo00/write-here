@@ -4,6 +4,10 @@ import { Marker } from './DiaryData';
 type TempMarker = Omit<Marker, 'diary_id' | 'user_id'>;
 
 interface MapState {
+  // 여유되면 변경
+  // kakaoMap: kakao.maps.Map | null;
+  // setKaKaoMap: (kakaoMap: kakao.maps.Map) => void;
+
   currentLat: number;
   currentLon: number;
   setCurrentLocation: (lat: number, lon: number) => void;
@@ -22,9 +26,20 @@ interface MapState {
 
   currentMarker: unknown | null;
   setCurrentMarker: (markerInstance: unknown) => void;
+
+  isOverlayOpen: boolean;
+  markerId: number | undefined;
+  openOverlay: (markerId: number | undefined) => void;
+  closeOverlay: () => void;
+
+  isPageModalOpen: boolean;
+  setPageModalOpen: (state: boolean) => void;
 }
 
 export const useMapStore = create<MapState>((set) => ({
+  // kakaoMap: null,
+  // setKaKaoMap: (kakaoMap: kakao.maps.Map) => set({ kakaoMap }),
+
   currentLat: 37.5665,
   currentLon: 126.978,
   setCurrentLocation: (lat, lon) => set({ currentLat: lat, currentLon: lon }),
@@ -35,7 +50,7 @@ export const useMapStore = create<MapState>((set) => ({
   tempMarker: {
     lat: 0,
     lon: 0,
-    marker_path: '',
+    marker_path: '/icons/pins/pin-1-black.svg',
     region: '',
   },
   setTempMarkerPath: (path) => {
@@ -55,7 +70,12 @@ export const useMapStore = create<MapState>((set) => ({
   },
   initTempMarker: () => {
     set(() => ({
-      tempMarker: { lat: 0, lon: 0, marker_path: '', region: '' },
+      tempMarker: {
+        lat: 0,
+        lon: 0,
+        marker_path: '/icons/pins/pin-1-black.svg',
+        region: '',
+      },
     }));
   },
 
@@ -64,4 +84,12 @@ export const useMapStore = create<MapState>((set) => ({
 
   currentMarker: null,
   setCurrentMarker: (markerInstance) => set({ currentMarker: markerInstance }),
+
+  isOverlayOpen: false,
+  markerId: undefined,
+  openOverlay: (markerId) => set({ isOverlayOpen: true, markerId }),
+  closeOverlay: () => set({ isOverlayOpen: false, markerId: undefined }),
+
+  isPageModalOpen: false,
+  setPageModalOpen: (state) => set({ isPageModalOpen: state }),
 }));
