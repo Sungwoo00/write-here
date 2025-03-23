@@ -1,13 +1,12 @@
-import { Tables } from '@/types/database.types';
 import { IMAGE_PATHS } from '@/constants/imagePaths';
 import { tm } from '@/utils/tw-merge';
 import Tag from '@/components/level-1/Tag';
 import LikeToggle from '@/components/level-1/LikeToggle';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import { Diary } from '@/store/DiaryData';
 interface DiaryCardProps {
-  diary: Tables<'diaries'>;
+  diary: Diary;
 }
 
 // place type에 따라 카드 배경 색상 다르게 적용
@@ -40,16 +39,19 @@ const DiaryCard = ({ diary }: DiaryCardProps) => {
     setIsLiked((prev) => !prev);
   };
 
-  // 다이어리 클릭 시 디테일 페이지로 이동
   const handleCardClick = () => {
     navigate(`/diary/${diary.diary_id}`);
   };
 
   return (
-    <button
+    <div
+      role="button"
+      tabIndex={0}
       className="m-6 cursor-pointer text-left focus:outline-none"
       onClick={handleCardClick}
-      type="button"
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') handleCardClick();
+      }}
     >
       <div className="w-[366px] h-[277px] lg:h-[295px] lg:w-[370px] bg-white rounded-2xl shadow-md overflow-hidden">
         {/* 이미지 배경 */}
@@ -61,12 +63,20 @@ const DiaryCard = ({ diary }: DiaryCardProps) => {
             backgroundImage: `url(${diary.img?.[0] || IMAGE_PATHS.blueBottle})`,
           }}
         >
-          <div className="absolute bottom-3 left-3">
+          <div
+            role="button"
+            tabIndex={0}
+            className="absolute bottom-3 left-3 z-10"
+            onClick={(e) => e.stopPropagation()}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') e.stopPropagation();
+            }}
+          >
             <LikeToggle isToggled={isLiked} onToggle={handleLikeToggle} />
           </div>
         </div>
 
-        {/* place type에 따라 동적으로 카드 배경 색상 적용 */}
+        {/* 카드 본문 영역 */}
         <div
           className={tm(
             'w-[366px] h-[120px] lg:h-[138px] lg:w-[370px] p-3 overflow-hidden flex flex-col justify-between',
@@ -91,7 +101,7 @@ const DiaryCard = ({ diary }: DiaryCardProps) => {
           </div>
         </div>
       </div>
-    </button>
+    </div>
   );
 };
 
