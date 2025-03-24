@@ -1,6 +1,6 @@
 import DiaryPlaceTypeSelector from '@/components/level-2/DiaryPlaceTypeSelector';
 import DiaryInput from '@/components/level-1/DiaryInput';
-import { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useState } from 'react';
 import DiaryDateSelector from '@/components/level-2/DiaryDateSelector';
 import SubmitButton from '@/components/level-1/SubmitButton';
 import ImageSwiper from '@/components/level-2/ImageSwiper';
@@ -25,6 +25,13 @@ function DiaryRegister() {
   const [tagText, setTagText] = useState('');
   const [date, setDate] = useState(new Date());
   const [isPublic, setIsPublic] = useState(true);
+
+  const isFormValid = !!(
+    placeText.trim() &&
+    placeType &&
+    titleText.trim() &&
+    contentText.trim()
+  );
 
   const addMarker = useTableStore((state) => state.addMarker);
   const addDiary = useTableStore((state) => state.addDiary);
@@ -253,7 +260,7 @@ function DiaryRegister() {
         label="태그를 입력해주세요(ex: #야무쌤안녕하세요))"
         onChange={handleTagChange}
       />
-      <SubmitButton label="저장하기" disable={false} />
+      <SubmitButton label="저장하기" disable={!isFormValid} />
     </form>
   );
 }
