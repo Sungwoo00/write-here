@@ -29,8 +29,6 @@ function Calendar({ date, onDateChange }: Omit<CalendarProps, 'diaryData'>) {
     const imagesMap: Record<string, string> = {};
     const datesWithDiaries = new Set<string>();
 
-    console.log(diaryData);
-
     diaryData.forEach((item) => {
       const dateKey = new Date(item.post_date).toISOString().split('T')[0];
       datesWithDiaries.add(dateKey);
