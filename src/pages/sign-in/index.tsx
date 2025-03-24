@@ -38,6 +38,7 @@ function SignIn() {
     navigate('/write-here-map');
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedValidateEmail = useCallback(
     debounce((value: string) => {
       const isValid = isValidEmail(value);
