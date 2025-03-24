@@ -75,7 +75,7 @@ const ProfileRecord = () => {
 
         {/* 중앙 텍스트 */}
         <div className="absolute top-[50%] left-[50%] transform -translate-x-[50%] -translate-y-[50%] flex flex-col items-center justify-center">
-          <p className="text-dark-gray text-xs lg:text-sm font-[Paperlogy] leading-none">
+          <p className="text-dark-gray text-xs font-[Paperlogy] leading-none">
             작성한 기록
           </p>
           <p className="text-lg lg:text-2xl font-bold font-[Paperlogy]">
