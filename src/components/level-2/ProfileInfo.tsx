@@ -10,19 +10,14 @@ const infoData = [
       <div className="flex flex-col gap-2">
         <button
           className="bg-blue-500 text-white px-3 py-1 rounded-lg font-[Paperlogy] whitespace-nowrap"
-          onClick={() =>
-            handleOpenModal('토스로 커피 사주기 (Fake QR)', '/qrfake.png')
-          }
+          onClick={() => handleOpenModal('토스로 커피 사주기', '/qrcode.jpg')}
         >
           토스로 커피 사주기
         </button>
         <button
           className="bg-yellow-400 text-black px-3 py-1 rounded-lg font-[Paperlogy] whitespace-nowrap"
           onClick={() =>
-            handleOpenModal(
-              '카카오 페이로 커피 사주기 (Fake QR)',
-              '/qrfake.png'
-            )
+            handleOpenModal('카카오 페이로 커피 사주기', '/qrcode.jpg')
           }
         >
           카카오 페이로 커피 사주기
