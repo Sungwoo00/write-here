@@ -1,55 +1,53 @@
 import { useEffect, useState } from 'react';
-import { getUserId } from '@/utils/auth';
 import supabase from '@/utils/supabase';
 import { PostgrestError } from '@supabase/supabase-js';
+import useTableStore from '@/store/DiaryData';
 
-// 커스텀 에러 타입 정의
 type CustomError = {
   message: string;
   cause?: unknown;
 };
 
 function ProfileStatus() {
+  const { profiles, currentUserId } = useTableStore();
+
+  const userProfile = profiles.find((p) => p.user_id === currentUserId);
+
   const [profile, setProfile] = useState({
-    name: '사용자',
-    status: '상태 메시지를 입력하세요.',
-    avatar: '/images/profile.jpg',
+    name: userProfile?.nickname || '사용자',
+    status: userProfile?.profile_msg || '상태 메시지를 입력하세요.',
+    avatar: userProfile?.profile_img || '/images/profile.jpg',
   });
+
+  useEffect(() => {
+    if (userProfile) {
+      setProfile({
+        name: userProfile.nickname || '사용자',
+        status: userProfile.profile_msg || '상태 메시지를 입력하세요.',
+        avatar: userProfile.profile_img || '/images/profile.jpg',
+      });
+    }
+  }, [userProfile]);
 
   const [isPopupOpen, setPopupOpen] = useState(false);
   const [tempProfile, setTempProfile] = useState(profile);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [tempAvatarPreview, setTempAvatarPreview] = useState<string | null>(
+    null
+  );
 
-  // 프로필 불러오기
   useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const userId = await getUserId();
-        if (!userId) return;
-
-        const { data, error } = await supabase
-          .from('profiles')
-          .select('nickname, profile_msg, profile_img')
-          .eq('user_id', userId)
-          .single();
-
-        if (error) throw error;
-
-        setProfile({
-          name: data.nickname || '사용자',
-          status: data.profile_msg || '상태 메시지를 입력하세요.',
-          avatar: data.profile_img || '/images/profile.jpg',
-        });
-      } catch (error: unknown) {
-        const err = error as PostgrestError | CustomError;
-        console.error('프로필 불러오기 실패:', err.message);
-      }
-    };
-
-    fetchProfile();
-  }, []);
+    if (isPopupOpen) {
+      setTempProfile(profile);
+    }
+  }, [isPopupOpen, profile]);
 
   const togglePopup = () => {
-    setTempProfile(profile);
+    if (tempAvatarPreview && tempAvatarPreview.startsWith('blob:')) {
+      URL.revokeObjectURL(tempAvatarPreview);
+    }
+    setTempAvatarPreview(null);
+    setSelectedFile(null);
     setPopupOpen(!isPopupOpen);
   };
 
@@ -57,49 +55,105 @@ function ProfileStatus() {
     setTempProfile({ ...tempProfile, [e.target.name]: e.target.value });
   };
 
-  // 프로필 업데이트 (닉네임, 상태 메시지)
   const handleSaveProfile = async () => {
     try {
-      const userId = await getUserId();
-      if (!userId) {
+      if (!currentUserId) {
         alert('유저 정보를 불러오지 못했습니다. 다시 로그인해주세요.');
         return;
       }
 
-      const { error } = await supabase
+      let newAvatarUrl = profile.avatar;
+
+      if (selectedFile) {
+        const filePath = `${currentUserId}/${selectedFile.name}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from('avatars')
+          .upload(filePath, selectedFile, {
+            cacheControl: '3600',
+            upsert: true,
+          });
+
+        if (uploadError) throw uploadError;
+
+        const { data: urlData } = supabase.storage
+          .from('avatars')
+          .getPublicUrl(filePath);
+
+        if (!urlData || !urlData.publicUrl) {
+          throw new Error('파일 URL을 가져오는 데 실패했습니다.');
+        }
+
+        newAvatarUrl = urlData.publicUrl;
+      }
+
+      const { error, data: updateData } = await supabase
         .from('profiles')
         .update({
           nickname: tempProfile.name,
           profile_msg: tempProfile.status,
+          profile_img: newAvatarUrl,
         })
-        .eq('user_id', userId);
+        .eq('user_id', currentUserId);
+
+      console.log('DB 업데이트 결과:', { 에러: error, 데이터: updateData });
 
       if (error) throw error;
 
-      setProfile(tempProfile);
+      const newProfile = {
+        name: tempProfile.name,
+        status: tempProfile.status,
+        avatar: newAvatarUrl,
+      };
+      console.log('새로운 프로필 상태:', newProfile);
+
+      setProfile(newProfile);
+
+      if (tempAvatarPreview && tempAvatarPreview.startsWith('blob:')) {
+        URL.revokeObjectURL(tempAvatarPreview);
+      }
+      setTempAvatarPreview(null);
+      setSelectedFile(null);
       setPopupOpen(false);
+
+      setTimeout(() => {
+        console.log('최종 업데이트 후 상태:', {
+          프로필: profile,
+          스토어프로필: profiles.find((p) => p.user_id === currentUserId),
+        });
+      }, 100);
+
+      console.log('Store 데이터 갱신 시도');
+      await useTableStore.getState().fetchProfiles(currentUserId);
+
+      console.log('Store 데이터 갱신 완료');
+
+      setTimeout(() => {
+        console.log('Store 갱신 후 최종 상태:', {
+          프로필: profile,
+          스토어프로필: useTableStore
+            .getState()
+            .profiles.find((p) => p.user_id === currentUserId),
+        });
+      }, 500);
     } catch (error: unknown) {
       const err = error as PostgrestError | CustomError;
       console.error('프로필 업데이트 실패:', err.message);
+      console.error('에러 상세:', error);
       alert('프로필 업데이트 중 오류가 발생했습니다. 다시 시도해주세요.');
     }
   };
 
-  // 프로필 이미지 업로드 (PNG, JPG만 허용)
-  const handleImageUpload = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    // PNG, JPG(JPEG)만 업로드 가능하도록 제한
     const allowedExtensions = ['image/png', 'image/jpeg'];
     if (!allowedExtensions.includes(file.type)) {
       alert('PNG 또는 JPG 형식의 이미지 파일만 업로드 가능합니다!');
       return;
     }
 
-    // 파일 크기 3MB 초과 시 제한
     const MAX_SIZE_MB = 3;
     if (file.size > MAX_SIZE_MB * 1024 * 1024) {
       alert(
@@ -108,47 +162,13 @@ function ProfileStatus() {
       return;
     }
 
-    if (profile.avatar.startsWith('blob:')) {
-      URL.revokeObjectURL(profile.avatar);
+    if (tempAvatarPreview && tempAvatarPreview.startsWith('blob:')) {
+      URL.revokeObjectURL(tempAvatarPreview);
     }
 
-    try {
-      const userId = await getUserId();
-      if (!userId) {
-        alert('유저 정보를 불러오지 못했습니다. 다시 로그인해주세요.');
-        return;
-      }
-
-      const filePath = `${userId}/${file.name}`;
-
-      const { error } = await supabase.storage
-        .from('avatars')
-        .upload(filePath, file, { cacheControl: '3600' });
-
-      if (error) throw error;
-
-      const { data: urlData } = supabase.storage
-        .from('avatars')
-        .getPublicUrl(filePath);
-      if (!urlData || !urlData.publicUrl) {
-        throw new Error('파일 URL을 가져오는 데 실패했습니다.');
-      }
-
-      setProfile((prevProfile) => ({
-        ...prevProfile,
-        avatar: urlData.publicUrl,
-      }));
-
-      // DB에 프로필 이미지 URL 업데이트
-      await supabase
-        .from('profiles')
-        .update({ profile_img: urlData.publicUrl })
-        .eq('user_id', userId);
-    } catch (error: unknown) {
-      const err = error as PostgrestError | CustomError;
-      console.error('이미지 업로드 실패:', err.message);
-      alert('이미지 업로드 중 오류가 발생했습니다. 다시 시도해주세요.');
-    }
+    const previewUrl = URL.createObjectURL(file);
+    setTempAvatarPreview(previewUrl);
+    setSelectedFile(file);
   };
 
   return (
