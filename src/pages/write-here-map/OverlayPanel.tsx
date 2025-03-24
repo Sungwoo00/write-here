@@ -38,7 +38,7 @@ function OverlayPanel() {
     >
       <button
         onClick={handleButtonClick}
-        className="fixed left-2 top-2 lg:absolute lg:left-4 lg:top-4 z-10"
+        className="absolute left-4 top-4 lg:absolute lg:left-4 lg:top-4 z-10"
       >
         <img src="/icons/icon-x.svg" alt="닫기 버튼" />
       </button>
