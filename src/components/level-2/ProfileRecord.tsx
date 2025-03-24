@@ -63,7 +63,7 @@ const ProfileRecord = () => {
             outerRadius={56}
             dataKey="value"
           >
-            {regionStats.map((region, index) => (
+            {regionStats.map((_, index) => (
               <Cell
                 key={`cell-${index}`}
                 fill={COLORS[index % COLORS.length]}
