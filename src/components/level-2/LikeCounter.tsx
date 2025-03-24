@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import LikeToggle from '../level-1/LikeToggle';
+import LikeToggle from '@/components/level-1/LikeToggle';
 
 function LikeCounter() {
   const [likeCount, setLikeCount] = useState(999);
