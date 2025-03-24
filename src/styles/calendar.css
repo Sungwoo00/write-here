@@ -4,28 +4,6 @@
   display: flex;
   justify-content: center;
 
-  .has-diary-image {
-    position: relative;
-    overflow: hidden;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-  }
-
-  .has-diary-image abbr {
-    position: relative;
-    z-index: 2;
-    color: white;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
-  }
-
-  .has-diary-image .today-circle:hover,
-  .has-diary-image:hover {
-    /* background-image: transparent !important; */
-    background-color: var(--light-beige);
-    filter: brightness(0.8);
-  }
-
   .react-calendar {
     width: 70vw !important;
     border: none;
@@ -35,7 +13,29 @@
       0 10px 15px -3px rgba(0, 0, 0, 0.1),
       0 4px 6px -4px rgba(0, 0, 0, 0.1);
     border-radius: 12px;
-    animation: CalendarFadeIn 0.3s ease-out forwards;
+    animation: CalendarFadeIn 0.2s ease-out forwards;
+  }
+
+  .has-diary-image {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .has-diary-image abbr {
+    position: relative;
+    z-index: 3;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+  }
+
+  .has-diary-image:hover,
+  .has-diary-image:focus .diary-image-background {
+    filter: brightness(0.7);
+    transition: filter;
+  }
+
+  .diary-image-background {
+    transition: filter 0.3s ease;
   }
 
   @keyframes CalendarFadeIn {
@@ -134,7 +134,7 @@
 
   @media (min-width: 1023px) {
     .react-calendar {
-      width: 60vw !important;
+      width: 40vw !important;
     }
 
     .react-calendar__navigation {

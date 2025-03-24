@@ -2,7 +2,6 @@ import ReactCalendar from 'react-calendar';
 import '@/styles/calendar.css';
 import 'react-calendar/dist/Calendar.css';
 import { useState, useEffect } from 'react';
-import { tm } from '@/utils/tw-merge';
 import useTableStore from '@/store/DiaryData';
 import { useNavigate } from 'react-router-dom';
 
@@ -13,7 +12,7 @@ interface CalendarProps {
 
 function Calendar({ date, onDateChange }: Omit<CalendarProps, 'diaryData'>) {
   const [dateImages, setDateImages] = useState<Record<string, string>>({});
-  const [diaryDates, setDiaryDates] = useState<Set<string>>(new Set());
+  const setDiaryDates = useState<Set<string>>(new Set())[1];
   const [diaryIds, setDiaryIds] = useState<Record<string, number>>({});
 
   const navigate = useNavigate();
@@ -24,32 +23,42 @@ function Calendar({ date, onDateChange }: Omit<CalendarProps, 'diaryData'>) {
 
   const diaryData = useTableStore((state) => state.diaries);
 
+  const getDateFromPostDate = (postDate: string): string => {
+    return postDate.split('T')[0];
+  };
+
   useEffect(() => {
     const diaryIdsMap: Record<string, number> = {};
     const imagesMap: Record<string, string> = {};
     const datesWithDiaries = new Set<string>();
 
+    const defaultImageUrl = '/public/default.png';
+
     diaryData.forEach((item) => {
-      const dateKey = new Date(item.post_date).toISOString().split('T')[0];
+      if (!item.post_date) return;
+      const dateKey = getDateFromPostDate(item.post_date);
+
       datesWithDiaries.add(dateKey);
+      diaryIdsMap[dateKey] = item.diary_id as number;
 
       if (item.img && Array.isArray(item.img) && item.img.length > 0) {
         imagesMap[dateKey] = item.img[0];
-        diaryIdsMap[dateKey] = item.diary_id as number;
+      } else {
+        imagesMap[dateKey] = defaultImageUrl;
       }
     });
 
     setDiaryDates(datesWithDiaries);
     setDateImages(imagesMap);
     setDiaryIds(diaryIdsMap);
-
-    Object.entries(imagesMap).forEach(([dateKey, imageUrl]) => {
-      document.documentElement.style.setProperty(
-        `--bg-image-${dateKey}`,
-        `url(${imageUrl})`
-      );
-    });
   }, [diaryData]);
+
+  function getTileDateKey(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
 
   const handleCalendarChange = (value: unknown) => {
     if (value instanceof Date) {
@@ -64,7 +73,7 @@ function Calendar({ date, onDateChange }: Omit<CalendarProps, 'diaryData'>) {
   };
 
   const handleTileClick = (date: Date) => {
-    const dateKey = date.toISOString().split('T')[0];
+    const dateKey = getTileDateKey(date);
     const diaryId = diaryIds[dateKey];
 
     if (diaryId) {
@@ -77,8 +86,8 @@ function Calendar({ date, onDateChange }: Omit<CalendarProps, 'diaryData'>) {
   const tileDisabled = ({ date, view }: { date: Date; view: string }) => {
     if (view !== 'month') return false;
 
-    const dateKey = date.toISOString().split('T')[0];
-    return !diaryDates.has(dateKey);
+    const dateKey = getTileDateKey(date);
+    return !diaryIds[dateKey];
   };
 
   const getTileClassName = ({
@@ -111,52 +120,63 @@ function Calendar({ date, onDateChange }: Omit<CalendarProps, 'diaryData'>) {
     if (isSaturday && isCurrentMonthTile) classes.push('saturday-blue');
     if (isSunday && isCurrentMonthTile) classes.push('sunday-red');
 
-    const dateKey = date.toISOString().split('T')[0];
-
+    const dateKey = getTileDateKey(date);
     if (dateImages[dateKey]) {
       classes.push('has-diary-image');
-
-      setTimeout(() => {
-        const elements = document.querySelectorAll(
-          `.react-calendar__tile.has-diary-image`
-        );
-        elements.forEach((el) => {
-          if (
-            el instanceof HTMLElement &&
-            el.querySelector(`abbr[aria-label*="${date.getDate()}"]`)
-          ) {
-            el.style.backgroundImage = `url(${dateImages[dateKey]})`;
-          }
-        });
-      }, 0);
+      classes.push(`diary-date-${dateKey.replace(/-/g, '')}`);
     }
 
     return classes.join(' ');
   };
 
+  const tileContent = ({ date, view }: { date: Date; view: string }) => {
+    if (view !== 'month') return null;
+
+    const dateKey = getTileDateKey(date);
+
+    if (dateImages[dateKey]) {
+      return (
+        <div
+          className="diary-image-background"
+          style={{
+            backgroundImage: `url(${dateImages[dateKey]})`,
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            zIndex: 1,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            opacity: 1,
+          }}
+        />
+      );
+    }
+
+    return null;
+  };
+
   return (
-    <div className={tm('w-full big-calendar')}>
+    <div className="big-calendar">
       <ReactCalendar
+        value={date}
         showFixedNumberOfWeeks={true}
         showNeighboringMonth={false}
         onChange={handleCalendarChange}
         onClickDay={handleTileClick}
-        value={date}
         calendarType="iso8601"
-        className={tm('calendar-molecule bg-white', 'lg:text-lg max-w-screen')}
+        minDate={minDate}
+        maxDate={maxDate}
         prevAriaLabel="이전 달"
         nextAriaLabel="다음 달"
         prev2Label={null}
         next2Label={null}
-        navigationLabel={({ date }) => {
-          return `${date.getFullYear()}년 ${date.getMonth() + 1}월`;
-        }}
-        tileClassName={getTileClassName}
         formatDay={(_, date) => date.getDate().toString()}
-        minDate={minDate}
-        maxDate={maxDate}
-        minDetail="decade"
         tileDisabled={tileDisabled}
+        tileClassName={getTileClassName}
+        tileContent={tileContent}
+        locale="ko-KR"
       />
     </div>
   );
