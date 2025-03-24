@@ -168,8 +168,8 @@ const InfoSection = () => {
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        buttonConfirmText={modalType === 'qr' ? '확인' : '닫기'}
-        buttonCancelText={modalType === 'qr' ? '확인' : '취소'}
+        buttonConfirmText={modalType === 'qr' ? '확인' : '확인'}
+        buttonCancelText={modalType === 'qr' ? '취소' : '취소'}
         onConfirm={modalType === 'qr' ? () => setIsModalOpen(false) : onConfirm}
       >
         <div className="p-4 text-center">
