@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 import DiaryCard from '@/components/level-2/DiaryCard';
 import useTableStore from '@/store/DiaryData';
+import type { Diary } from '@/store/DiaryData';
 import { tm } from '@/utils/tw-merge';
 
 function Diary() {
   const { fetchCurrentUserData, fetchDiaries, loading, error } =
     useTableStore();
-  const [diaries, setDiaries] = useState([]); // 다이어리 상태 관리
+  const [diaries, setDiaries] = useState<Diary[]>([]); // 다이어리 상태 관리
 
   useEffect(() => {
     fetchCurrentUserData(); // 사용자 정보 불러오기
