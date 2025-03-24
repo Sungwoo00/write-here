@@ -37,7 +37,7 @@
 
 @font-face {
   font-family: 'Paperlogy';
-  src: url('/fonts/Paperlogy-6SemiBald.woff') format('woff');
+  src: url('/fonts/Paperlogy-6SemiBold.woff') format('woff');
   font-weight: bold;
 }
 .mask-icon {

@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { getWidth, watchWidth } from '@/utils/width-element';
-import Spring from '../level-1/Spring';
 import { throttle } from 'lodash-es';
-
+import Spring from '@/components/level-1/Spring';
 interface RendererSpringProps {
   className?: string;
 }

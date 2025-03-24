@@ -4,19 +4,21 @@ import '@/styles/diaryDateSelector.css';
 import { useState } from 'react';
 import { tm } from '@/utils/tw-merge';
 
+type CalendarValue = Date | Date[] | null;
+
 interface DiaryDateSelectorProps {
   date: Date | null;
   onDateChange: (date: Date) => void;
 }
 
-const DiaryDateSelector = ({ date, onDateChange }: DiaryDateSelectorProps) => {
+function DiaryDateSelector({ date, onDateChange }: DiaryDateSelectorProps) {
   const [showCalendar, setShowCalendar] = useState(false);
 
   const minDate = new Date(2001, 0, 1);
   const currentYear = new Date().getFullYear();
   const maxDate = new Date(currentYear + 5, 11, 31);
 
-  const handleCalendarChange = (value: any) => {
+  const handleCalendarChange = (value: CalendarValue) => {
     if (value instanceof Date) {
       onDateChange(value);
       setShowCalendar(false);
@@ -82,10 +84,10 @@ const DiaryDateSelector = ({ date, onDateChange }: DiaryDateSelectorProps) => {
   };
 
   return (
-    <div className={tm('w-full text-xs lg:text-base')}>
+    <div className={tm('w-full small-calendar text-xs lg:text-base')}>
       <div
         className={tm(
-          'p-2.5 rounded-lg mb-2.5 cursor-pointer',
+          'p-2.5 rounded-lg cursor-pointer',
           'flex justify-between items-center font-[Paperlogy]'
         )}
         onClick={toggleCalendar}
@@ -97,7 +99,7 @@ const DiaryDateSelector = ({ date, onDateChange }: DiaryDateSelectorProps) => {
         <Calendar
           showFixedNumberOfWeeks={true}
           showNeighboringMonth={false}
-          onChange={handleCalendarChange}
+          onChange={handleCalendarChange as any}
           value={date}
           calendarType="iso8601"
           className={tm(
@@ -120,6 +122,6 @@ const DiaryDateSelector = ({ date, onDateChange }: DiaryDateSelectorProps) => {
       )}
     </div>
   );
-};
+}
 
 export default DiaryDateSelector;
