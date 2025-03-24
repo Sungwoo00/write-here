@@ -3,7 +3,7 @@ import useTableStore from '@/store/DiaryData';
 import { PieChart, Pie, Cell, Tooltip } from 'recharts';
 import { tm } from '@/utils/tw-merge'; // Tailwind Merge 사용
 
-//파이 차트 색상 적용
+// 파이 차트 색상 적용
 const COLORS = [
   'var(--marker-blue)',
   'var(--marker-green)',
@@ -70,7 +70,21 @@ const ProfileRecord = () => {
               />
             ))}
           </Pie>
-          <Tooltip />
+          <Tooltip
+            contentStyle={{
+              backgroundColor: 'white',
+              color: 'Black',
+              borderRadius: '6px',
+              border: '1px solid Black',
+            }}
+            wrapperStyle={{
+              zIndex: 1200,
+            }}
+            itemStyle={{
+              fontSize: '0.75rem',
+              lineHeight: '1rem',
+            }}
+          />
         </PieChart>
 
         {/* 중앙 텍스트 */}
