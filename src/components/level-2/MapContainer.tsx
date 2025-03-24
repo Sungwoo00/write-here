@@ -4,6 +4,7 @@ import { useMapStore } from '@/store/Map';
 import useTableStore from '@/store/DiaryData';
 import Modal from '@/components/level-2/Modal';
 import MarkerSelector from '@/components/level-3/MarkerSelector';
+import MapSearch from '@/pages/write-here-map/MapSearch';
 
 const LocationIcon = '/icons/icon-gps.svg';
 
@@ -21,6 +22,7 @@ function MapContainer() {
   } = useMapStore();
   const { markers } = useTableStore();
   const mapRef = useRef<kakao.maps.Map | null>(null);
+  const [mapLoaded, setMapLoaded] = useState(false);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMsg, setModalMsg] = useState('');
@@ -34,6 +36,7 @@ function MapContainer() {
         level: 5,
       };
       mapRef.current = new kakao.maps.Map(container, options);
+      setMapLoaded(true);
     };
 
     if (!window.kakao) {
@@ -128,30 +131,35 @@ function MapContainer() {
   return (
     <div className="flex flex-col items-center justify-center w-full h-screen relative">
       <div id="map" className="w-full h-full"></div>
-      <button
-        onClick={goToCurrentLocation}
-        className="absolute bottom-5 left-5 bg-white border-none cursor-pointer 
+      {mapLoaded && mapRef.current && (
+        <>
+          <button
+            onClick={goToCurrentLocation}
+            className="absolute bottom-5 left-5 bg-white border-none cursor-pointer 
           w-10 h-10 rounded-full flex items-center justify-center z-10 
           shadow-md"
-      >
-        <img
-          src={LocationIcon}
-          alt="현재 위치 아이콘"
-          style={{ width: '24px', height: '24px' }}
-        />
-      </button>
-      <MarkerSelector />
-      {mapRef.current && addMarkerMode && (
-        <DrawMarker map={mapRef.current} marker={tempMarker} />
+          >
+            <img
+              src={LocationIcon}
+              alt="현재 위치 아이콘"
+              style={{ width: '24px', height: '24px' }}
+            />
+          </button>
+          <MarkerSelector />
+          {addMarkerMode && (
+            <DrawMarker map={mapRef.current} marker={tempMarker} />
+          )}
+          {markers.map((marker) => (
+            <DrawMarker
+              key={marker.marker_id}
+              map={mapRef.current}
+              marker={marker}
+            />
+          ))}
+          <MapSearch map={mapRef.current} />
+        </>
       )}
-      {mapRef.current &&
-        markers.map((marker) => (
-          <DrawMarker
-            key={marker.marker_id}
-            map={mapRef.current}
-            marker={marker}
-          />
-        ))}
+
       <Modal
         isOpen={isModalOpen}
         buttonConfirmText="확인"
