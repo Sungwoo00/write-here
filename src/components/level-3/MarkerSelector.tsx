@@ -24,6 +24,8 @@ export default function MarkerSelector() {
     initTempMarker,
     setPageModalOpen,
     isOverlayOpen,
+    initSearch,
+    mapSearchKeyword,
   } = useMapStore();
   const [selectedMarker, setSelectedMarker] = useState<string>(MARKER_TYPES[0]);
   const [selectedColor, setSelectedColor] =
@@ -32,7 +34,9 @@ export default function MarkerSelector() {
   const [isColorPaletteOpen, setIsColorPaletteOpen] = useState(false);
 
   const handleToggle = () => {
-    if (!addMarkerMode) {
+    if (mapSearchKeyword) {
+      initSearch();
+    } else if (!addMarkerMode) {
       toast.error('일기를 작성하려면 마커를 찍은 후 해당 마커를 클릭하세요');
 
       setAddMarkerMode(true);
@@ -40,8 +44,8 @@ export default function MarkerSelector() {
     } else if (isOverlayOpen) {
       setPageModalOpen(true);
     } else {
-      initTempMarker();
       setAddMarkerMode(false);
+      initTempMarker();
     }
   };
 
@@ -123,7 +127,7 @@ export default function MarkerSelector() {
         onClick={handleToggle}
         animate={{ rotate: addMarkerMode ? 45 : 0 }}
         transition={{ duration: 0.3 }}
-        className="w-13 h-13 flex items-center justify-center rounded-full shadow-lg text-white absolute bottom-[-15px]"
+        className="w-13 h-13 flex items-center justify-center rounded-full shadow-lg text-white absolute bottom-[-15px], cursor-pointer"
         style={{ backgroundColor: '#0A8423', bottom: '0px' }}
       >
         <svg
