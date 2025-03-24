@@ -15,6 +15,9 @@ import GoodBye from './pages/good-bye';
 import { useEffect } from 'react';
 import useTableStore from './store/DiaryData';
 import { Toaster } from 'react-hot-toast';
+import 'swiper/css';
+import 'swiper/css/pagination';
+import 'swiper/css/navigation';
 
 function App() {
   const fetchCurrentUserData = useTableStore(

@@ -2,13 +2,13 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination } from 'swiper/modules';
 
 interface DiaryImageSwiperProps {
-  images: string[]; // 다이어리의 img 데이터를 props로 받음
+  images: string[];
 }
 
 function DiaryImageSwiper({ images }: DiaryImageSwiperProps) {
   return (
     <div className="flex justify-center items-center bg-[var(--card-brown)] p-4 w-[90%] mx-auto shadow-md font-[Paperlogy] lg:py-30">
-      <div className="w-full max-w-lg">
+      <div className="w-full max-w-lg relative">
         {images.length > 0 ? (
           <Swiper
             pagination={{ clickable: true }}
@@ -33,6 +33,31 @@ function DiaryImageSwiper({ images }: DiaryImageSwiperProps) {
             이미지 없음
           </SwiperSlide>
         )}
+
+        <style>
+          {`
+            .swiper-pagination {
+              position: absolute;
+              bottom: 8px;
+              left: 50%;
+              transform: translateX(0%);
+              z-index: 10;
+            }
+
+            .swiper-pagination-bullet {
+              width: 10px;
+              height: 10px;
+              background-color: transparent;
+              border: 1.5px solid white;
+              opacity: 1;
+            }
+
+            .swiper-pagination-bullet-active {
+              background-color: var(--logo-dark-green);
+              border: 1px solid white;
+            }
+          `}
+        </style>
       </div>
     </div>
   );

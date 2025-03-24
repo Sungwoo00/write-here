@@ -15,6 +15,7 @@ function LikeToggle({ isToggled, onToggle }: LikeToggleProps) {
       type="button"
       onClick={handleToggle}
       aria-label={isToggled ? '좋아요 취소' : '좋아요'}
+      className="cursor-pointer"
     >
       <svg
         role="img"

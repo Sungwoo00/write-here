@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useMapStore } from '@/store/Map';
-import toast from 'react-hot-toast'; // ✅ 추가
+import { tm } from '@/utils/tw-merge';
+import toast from 'react-hot-toast';
 
 const COLOR_MAP = {
   black: '#000000',
@@ -56,7 +57,12 @@ export default function MarkerSelector() {
   }, [selectedMarker, selectedColor, setTempMarkerPath, setAddMarkerMode]);
 
   return (
-    <div className="absolute right-12 bottom-5 z-10 flex flex-col items-center">
+    <div
+      className={tm(
+        'absolute right-12 bottom-5 z-10 flex flex-col items-center',
+        isOverlayOpen ? 'lg:right-132' : ''
+      )}
+    >
       <AnimatePresence>
         {addMarkerMode && (
           <motion.div

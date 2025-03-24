@@ -7,13 +7,13 @@ import { tm } from '@/utils/tw-merge';
 function Diary() {
   const { fetchCurrentUserData, fetchDiaries, loading, error } =
     useTableStore();
-  const [diaries, setDiaries] = useState<Diary[]>([]); // 다이어리 상태 관리
+  const [diaries, setDiaries] = useState<Diary[]>([]);
 
   useEffect(() => {
-    fetchCurrentUserData(); // 사용자 정보 불러오기
+    fetchCurrentUserData();
     const loadDiaries = async () => {
-      await fetchDiaries(); // Zustand store 내부 상태를 업데이트
-      setDiaries(useTableStore.getState().diaries); // 최신 상태를 가져와 반영
+      await fetchDiaries();
+      setDiaries(useTableStore.getState().diaries);
     };
     loadDiaries();
   }, [fetchCurrentUserData, fetchDiaries]);
