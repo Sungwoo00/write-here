@@ -5,22 +5,14 @@ import supabase from '@/utils/supabase';
 const infoData = [
   { title: '앱 정보', content: 'v1.01' },
   {
-    title: <span className="whitespace-nowrap">개발자에게 커피 사주기</span>,
+    title: <span className="whitespace-nowrap">Developer와 Contact</span>,
     content: (handleOpenModal: (title: string, qrSrc?: string) => void) => (
       <div className="flex flex-col gap-2">
         <button
-          className="bg-blue-500 text-white px-3 py-1 rounded-lg font-[Paperlogy] whitespace-nowrap"
-          onClick={() => handleOpenModal('토스로 커피 사주기', '/qrcode.jpg')}
-        >
-          토스로 커피 사주기
-        </button>
-        <button
           className="bg-yellow-400 text-black px-3 py-1 rounded-lg font-[Paperlogy] whitespace-nowrap"
-          onClick={() =>
-            handleOpenModal('카카오 페이로 커피 사주기', '/qrcode.jpg')
-          }
+          onClick={() => handleOpenModal('Developer와 Contact', '/qrcode.jpg')}
         >
-          카카오 페이로 커피 사주기
+          Developer와 contact
         </button>
       </div>
     ),
@@ -116,7 +108,6 @@ const InfoSection = () => {
               >
                 {item.title}
                 <svg
-                  xmlns="http://www.w3.org/2000/svg"
                   className="w-5 h-5 text-gray-600 transition-transform duration-200"
                   style={{
                     transform:
