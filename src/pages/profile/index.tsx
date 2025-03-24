@@ -3,7 +3,7 @@ import supabase from '@/utils/supabase';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ProfileStatus from './../../components/level-2/ProfileStatus';
-import MyDiaryStats from '@/components/level-2/ProfileRecord'; // ✅ 추가
+import ProfileRecord from '@/components/level-2/ProfileRecord';
 
 function Profile() {
   const navigate = useNavigate();
@@ -44,15 +44,16 @@ function Profile() {
   };
 
   return (
-    <>
+    <div className="min-h-screen flex flex-col justify-center items-center">
       <ProfileStatus />
 
-      {/* ✅ MyDiaryStats 컴포넌트 추가 */}
-      <div className="mb-6">
-        <MyDiaryStats />
+      {/*  ProfileRecord 화면 중앙 정렬 */}
+      <div className="flex justify-center items-center w-full">
+        <ProfileRecord />
       </div>
 
-      <div className="flex-grow flex flex-col font-[HSSanTokki]">
+      {/* 로그아웃 & 회원탈퇴 버튼 */}
+      <div className="flex flex-col items-center font-[HSSanTokki] mt-6">
         <button
           type="button"
           className="text-[var(--icon-red)] hover:underline cursor-pointer"
@@ -79,7 +80,7 @@ function Profile() {
           </p>
         </Modal>
       </div>
-    </>
+    </div>
   );
 }
 

@@ -1,14 +1,16 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import useTableStore from '@/store/DiaryData';
 import { PieChart, Pie, Cell, Tooltip } from 'recharts';
+import { tm } from '@/utils/tw-merge'; // Tailwind Merge 사용
 
+//파이 차트 색상 적용
 const COLORS = [
-  '#00C49F',
-  '#0088FE',
-  '#FFBB28',
-  '#FF6384',
-  '#FF8042',
-  '#A28DFF',
+  'var(--marker-blue)',
+  'var(--marker-green)',
+  'var(--marker-red)',
+  'var(--marker-yellow)',
+  'var(--icon-red)',
+  'var(--light-green)',
 ];
 
 const ProfileRecord = () => {
@@ -16,6 +18,13 @@ const ProfileRecord = () => {
   const [regionStats, setRegionStats] = useState([]);
 
   useEffect(() => {
+    const countRegions = (markers) =>
+      markers.reduce((acc, marker) => {
+        const region = marker.region || '기타';
+        acc[region] = (acc[region] || 0) + 1;
+        return acc;
+      }, {});
+
     const regionCount = countRegions(markers);
     const allRegions = Object.entries(regionCount).map(([region, count]) => ({
       name: region,
@@ -25,33 +34,28 @@ const ProfileRecord = () => {
     setRegionStats(allRegions);
   }, [markers]);
 
-  const countRegions = (markers) => {
-    const regionCount = {};
-
-    markers.forEach((marker) => {
-      const region = marker.region || '기타';
-      if (regionCount[region]) {
-        regionCount[region] += 1;
-      } else {
-        regionCount[region] = 1;
-      }
-    });
-
-    return regionCount;
-  };
+  const totalRecords = useMemo(() => markers.length, [markers]);
 
   return (
-    <div className="p-6 bg-white rounded-2xl shadow-md flex items-center space-x-8">
+    <div
+      className={tm(
+        'profile-record bg-card-whitepink rounded-[1.4rem] shadow-md p-4 lg:p-6 flex items-center space-x-4 lg:space-x-8',
+        'w-[90%] max-w-[24rem] lg:w-[40%] lg:max-w-[32rem]'
+      )}
+    >
       {/* 원형 차트 */}
       <div className="relative">
-        <PieChart width={200} height={200}>
+        <PieChart
+          width={128}
+          height={128}
+          className="lg:w-[12rem] lg:h-[12rem]"
+        >
           <Pie
             data={regionStats}
             cx="50%"
             cy="50%"
-            innerRadius={60}
-            outerRadius={80}
-            fill="#8884d8"
+            innerRadius={40}
+            outerRadius={56}
             dataKey="value"
           >
             {regionStats.map((entry, index) => (
@@ -65,18 +69,27 @@ const ProfileRecord = () => {
         </PieChart>
 
         {/* 중앙 텍스트 */}
-        <div className="absolute top-[50%] left-[50%] transform -translate-x-[50%] -translate-y-[50%] text-center">
-          <p className="text-gray-500 text-sm">작성한 기록</p>
-          <p className="text-2xl font-bold">{markers.length}</p>
+        <div className="absolute top-[50%] left-[50%] transform -translate-x-[50%] -translate-y-[50%] flex flex-col items-center justify-center">
+          <p className="text-dark-gray text-xs lg:text-sm font-[Paperlogy] leading-none">
+            작성한 기록
+          </p>
+          <p className="text-lg lg:text-2xl font-bold font-[Paperlogy]">
+            {totalRecords}
+          </p>
         </div>
       </div>
 
-      {/* 지역 통계 테이블 */}
-      <div className="flex-1">
-        <h2 className="text-xl font-bold flex items-center space-x-2">
-          나의 여기 적기 기록 ✏️
+      {/* 지역별 기록 테이블 */}
+      <div className="flex-1 text-center lg:text-left">
+        <h2 className="text-base lg:text-xl font-bold font-[HSSanTokki] flex items-center justify-center lg:justify-start">
+          나의 여기 적기 기록{' '}
+          <img
+            src="/icons/pencil.svg"
+            alt="연필 아이콘"
+            className="w-5 h-5 ml-2"
+          />
         </h2>
-        <table className="w-full mt-4 text-sm">
+        <table className="w-full mt-2 text-xs font-[Paperlogy]">
           <thead>
             <tr className="text-gray-600 border-b">
               <th className="py-1 text-left">지역</th>
@@ -87,16 +100,18 @@ const ProfileRecord = () => {
           <tbody>
             {regionStats.map((region, index) => (
               <tr key={region.name} className="border-t">
-                <td className="py-2 flex items-center space-x-2">
+                <td className="py-1 flex items-center space-x-3">
                   <span
-                    className="w-3 h-3 rounded-full inline-block"
+                    className="w-2 h-2 lg:w-3 lg:h-3 rounded-full inline-block"
                     style={{ backgroundColor: COLORS[index % COLORS.length] }}
                   />
-                  {region.name}
+                  <span className="tracking-wide">{region.name}</span>
                 </td>
-                <td className="py-2 text-right">{region.value}</td>
-                <td className="py-2 text-right">
-                  {((region.value / markers.length) * 100).toFixed(1)}%
+                <td className="py-1 text-right">{region.value}</td>
+                <td className="py-1 text-right">
+                  {totalRecords > 0
+                    ? ((region.value / totalRecords) * 100).toFixed(1) + '%'
+                    : '0%'}
                 </td>
               </tr>
             ))}
