@@ -1,6 +1,6 @@
 import DiaryPlaceTypeSelector from '@/components/level-2/DiaryPlaceTypeSelector';
 import DiaryInput from '@/components/level-1/DiaryInput';
-import { FormEvent, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import DiaryDateSelector from '@/components/level-2/DiaryDateSelector';
 import SubmitButton from '@/components/level-1/SubmitButton';
 import ImageSwiper from '@/components/level-2/ImageSwiper';
@@ -35,6 +35,10 @@ function DiaryRegister() {
 
   const addMarker = useTableStore((state) => state.addMarker);
   const addDiary = useTableStore((state) => state.addDiary);
+
+  useEffect(() => {
+    setPlaceText(initialPlace);
+  }, [initialPlace]);
 
   const handlePlaceChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
