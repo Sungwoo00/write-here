@@ -81,6 +81,10 @@ function DiaryDetail() {
     navigate('/write-here-map');
   };
 
+  const handleGoBack = () => {
+    navigate(-1);
+  };
+
   const contentLines = editedContent.split('\n');
   while (contentLines.length < 5) contentLines.push(' ');
 
@@ -159,9 +163,16 @@ function DiaryDetail() {
       <div className="mb-30 text-center">
         <button
           onClick={handleNavigateToMap}
-          className="text-[var(--logo-green)] font-[HSSanTokki]"
+          className="text-[var(--logo-green)] font-[HSSanTokki]  hover:underline block mx-auto"
         >
-          지도에서 확인하기👣
+          지도에서 확인하기 🌍
+        </button>
+
+        <button
+          onClick={handleGoBack}
+          className="mt-4 text-[var(--dark-gray)] font-[HSSanTokki] hover:underline block mx-auto"
+        >
+          이전으로 돌아가기 🡸
         </button>
       </div>
     </div>
