@@ -174,7 +174,7 @@ function ProfileStatus() {
             className="absolute bottom-0 right-0 bg-white w-6 h-6 lg:w-7 lg:h-7 rounded-full shadow-md border hover:bg-[var(--light-gray)] cursor-pointer flex justify-center items-center"
           >
             <img
-              src="/public/icons/icon-pencil.svg"
+              src="/icons/icon-pencil.svg"
               alt="편집"
               className="w-3 h-3 lg:w-4 lg:h-4"
             />
