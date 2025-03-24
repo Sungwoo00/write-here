@@ -24,7 +24,6 @@ function DiaryRegister() {
   const [contentText, setContentText] = useState('');
   const [tagText, setTagText] = useState('');
   const [date, setDate] = useState(new Date());
-  const setLoading = useState(false)[1];
   const [isPublic, setIsPublic] = useState(true);
 
   const addMarker = useTableStore((state) => state.addMarker);
@@ -206,21 +205,18 @@ function DiaryRegister() {
       }
     } catch (error) {
       console.error('업로드 실패했습니다', error);
-    } finally {
-      setLoading(false);
     }
   };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    closeOverlay();
-    setAddMarkerMode(false);
-    initTempMarker();
-    setLoading(true);
     const newDiary = await createDiary();
     if (newDiary) {
       addDiary(newDiary);
     }
+    setAddMarkerMode(false);
+    initTempMarker();
+    closeOverlay();
   };
 
   return (
