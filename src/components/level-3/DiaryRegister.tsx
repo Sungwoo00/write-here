@@ -70,12 +70,6 @@ function DiaryRegister() {
     setDate(value);
   };
 
-  useEffect(() => {
-    if (tempMarker.region) {
-      setPlaceText(tempMarker.region);
-    }
-  }, [tempMarker.region]);
-
   const uploadMarker = async () => {
     try {
       if (!tempMarker.lat || !tempMarker.lon || !tempMarker.marker_path) {
