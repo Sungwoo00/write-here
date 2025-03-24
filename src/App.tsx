@@ -14,6 +14,7 @@ import DiaryCalendar from './pages/diary-calendar';
 import GoodBye from './pages/good-bye';
 import { useEffect } from 'react';
 import useTableStore from './store/DiaryData';
+import { Toaster } from 'react-hot-toast';
 
 function App() {
   const fetchCurrentUserData = useTableStore(
@@ -34,6 +35,26 @@ function App() {
 
   return (
     <BrowserRouter>
+      <Toaster
+        toastOptions={{
+          duration: 3500,
+          style: {
+            background: '#39673d',
+            color: '#ffffff',
+            fontFamily: 'HSSanTokki, sans-serif',
+            fontSize: '14px',
+            borderRadius: '999px',
+            padding: '12px 20px',
+            minWidth: '400px',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
+          },
+          icon: '❗',
+        }}
+        position="top-center"
+        containerStyle={{
+          top: '10%',
+        }}
+      />
       <Layout>
         <Routes>
           <Route path="/" element={<Landing />} />
