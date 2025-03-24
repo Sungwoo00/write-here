@@ -1,17 +1,29 @@
 import { useRef, useState, useEffect, useId } from 'react';
 import useTableStore from '@/store/DiaryData';
 import { tm } from '@/utils/tw-merge';
+import { useLocation } from 'react-router';
+import { useMapStore } from '@/store/Map';
 
 function Header() {
   const [showSearch, setShowSearch] = useState(false);
   const [input, setInput] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
   const fieldId = useId();
+  const location = useLocation();
+  const hasSearch = ['/write-here-map', '/diary', '/public-diary'].includes(
+    location.pathname
+  );
   const setDiarySearchKeyword = useTableStore((s) => s.setDiarySearchKeyword);
+  const { setMapSearchKeyword, setAddMarkerMode } = useMapStore();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setDiarySearchKeyword(input);
+    if (location.pathname === '/write-here-map') {
+      setMapSearchKeyword(input);
+      setAddMarkerMode(false);
+    } else {
+      setDiarySearchKeyword(input);
+    }
     setShowSearch(false);
   };
 
@@ -84,32 +96,36 @@ function Header() {
         </div>
       ) : (
         <>
-          <button
-            onClick={() => {
-              setShowSearch(true);
-              setInput('');
-            }}
-            aria-label="검색"
-            className="w-6 h-6 cursor-pointer"
-          >
-            {/* 검색 아이콘 */}
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="w-full h-full"
+          {hasSearch ? (
+            <button
+              onClick={() => {
+                setShowSearch(true);
+                setInput('');
+              }}
+              aria-label="검색"
+              className="w-6 h-6 cursor-pointer"
             >
-              <path
-                d="M21 21L16.65 16.65M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z"
-                stroke="#417b45"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </button>
+              {/* 검색 아이콘 */}
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-full h-full"
+              >
+                <path
+                  d="M21 21L16.65 16.65M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z"
+                  stroke="#417b45"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </button>
+          ) : (
+            <div></div>
+          )}
 
           {/* 로고 */}
           <img src="/logo.webp" alt="여기적기 로고" className="h-full w-auto" />
