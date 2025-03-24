@@ -4,6 +4,7 @@ import 'react-calendar/dist/Calendar.css';
 import { useState, useEffect } from 'react';
 import { tm } from '@/utils/tw-merge';
 import useTableStore from '@/store/DiaryData';
+import { useNavigate } from 'react-router-dom';
 
 interface CalendarProps {
   date: Date | null;
@@ -13,6 +14,9 @@ interface CalendarProps {
 function Calendar({ date, onDateChange }: Omit<CalendarProps, 'diaryData'>) {
   const [dateImages, setDateImages] = useState<Record<string, string>>({});
   const [diaryDates, setDiaryDates] = useState<Set<string>>(new Set());
+  const [diaryIds, setDiaryIds] = useState<Record<string, number>>({});
+
+  const navigate = useNavigate();
 
   const minDate = new Date(2001, 0, 1);
   const currentYear = new Date().getFullYear();
@@ -21,10 +25,11 @@ function Calendar({ date, onDateChange }: Omit<CalendarProps, 'diaryData'>) {
   const diaryData = useTableStore((state) => state.diaries);
 
   useEffect(() => {
-    console.log('전달받은 다이어리 데이터:', diaryData);
-
+    const diaryIdsMap: Record<string, number> = {};
     const imagesMap: Record<string, string> = {};
     const datesWithDiaries = new Set<string>();
+
+    console.log(diaryData);
 
     diaryData.forEach((item) => {
       const dateKey = new Date(item.post_date).toISOString().split('T')[0];
@@ -32,11 +37,13 @@ function Calendar({ date, onDateChange }: Omit<CalendarProps, 'diaryData'>) {
 
       if (item.img && Array.isArray(item.img) && item.img.length > 0) {
         imagesMap[dateKey] = item.img[0];
+        diaryIdsMap[dateKey] = item.diary_id as number;
       }
     });
 
     setDiaryDates(datesWithDiaries);
     setDateImages(imagesMap);
+    setDiaryIds(diaryIdsMap);
 
     Object.entries(imagesMap).forEach(([dateKey, imageUrl]) => {
       document.documentElement.style.setProperty(
@@ -56,6 +63,17 @@ function Calendar({ date, onDateChange }: Omit<CalendarProps, 'diaryData'>) {
     ) {
       onDateChange(value[0]);
     }
+  };
+
+  const handleTileClick = (date: Date) => {
+    const dateKey = date.toISOString().split('T')[0];
+    const diaryId = diaryIds[dateKey];
+
+    if (diaryId) {
+      navigate(`/diary/${diaryId}`);
+    }
+
+    onDateChange(date);
   };
 
   const tileDisabled = ({ date, view }: { date: Date; view: string }) => {
@@ -124,6 +142,7 @@ function Calendar({ date, onDateChange }: Omit<CalendarProps, 'diaryData'>) {
         showFixedNumberOfWeeks={true}
         showNeighboringMonth={false}
         onChange={handleCalendarChange}
+        onClickDay={handleTileClick}
         value={date}
         calendarType="iso8601"
         className={tm('calendar-molecule bg-white', 'lg:text-lg max-w-screen')}

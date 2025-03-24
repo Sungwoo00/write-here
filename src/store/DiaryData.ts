@@ -4,14 +4,8 @@ import { Database } from '@/types/database.types';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
 export type Diary = Database['public']['Tables']['diaries']['Insert'];
-//사용 제외할 데이터 사용 양식
-// type DiaryPayload = Omit<Diary, 'user_id' | 'created_at' | 'updated_at'>;
-
 export type Marker = Database['public']['Tables']['markers']['Insert'];
-// type MarkerPayload = Omit<Marker, 'created_at'>;
-
 export type Profile = Database['public']['Tables']['profiles']['Insert'];
-// type Profileload = Omit<Profile, 'created_at'>;
 
 interface TableState {
   diaries: Diary[];
@@ -44,7 +38,10 @@ interface TableState {
   fetchMarkers: (userId: string) => Promise<void>;
   fetchProfiles: (userId: string) => Promise<void>;
   fetchAllTables: (userId: string) => Promise<void>;
+
   addDiary: (diary: Diary) => void;
+  updateDiary: (diary: Diary) => void;
+  removeDiary: (diaryId: number) => void;
   addMarker: (marker: Marker) => void;
 }
 
@@ -73,75 +70,40 @@ const useTableStore = create<TableState>()(
       },
       currentUserId: null,
 
-      subscribeToPublicDiaries: () => {
-        const { unsubscribeFromPublicDiaries } = get();
-        unsubscribeFromPublicDiaries();
-
-        const subscription = supabase
-          .channel('public_diaries_changes')
-          .on(
-            'postgres_changes',
-            {
-              event: '*',
-              schema: 'is_public',
-              table: 'diaries',
-              filter: 'is_public=eq.true',
-            },
-            () => {
-              const { fetchPublicDiaries } = get();
-              fetchPublicDiaries();
-            }
-          )
-          .subscribe();
-
+      updateDiary: (updatedDiary) =>
         set((state) => ({
-          subscriptions: {
-            ...state.subscriptions,
-            publicDiaries: () => subscription.unsubscribe(),
-          },
-        }));
-      },
+          diaries: state.diaries.map((d) =>
+            d.diary_id === updatedDiary.diary_id ? updatedDiary : d
+          ),
+        })),
 
-      unsubscribeFromPublicDiaries: () => {
-        const { subscriptions } = get();
-        if (subscriptions.publicDiaries) {
-          subscriptions.publicDiaries();
-          set((state) => ({
-            subscriptions: {
-              ...state.subscriptions,
-              publicDiaries: null,
-            },
-          }));
-        }
-      },
-
-      addMarker: (marker: Marker) => {
+      removeDiary: (diaryId) =>
         set((state) => ({
-          markers: [...state.markers, marker],
-        }));
-      },
+          diaries: state.diaries.filter((d) => d.diary_id !== diaryId),
+        })),
 
-      addDiary: (diary: Diary) => {
+      addDiary: (diary) =>
         set((state) => ({
           diaries: [...state.diaries, diary],
-        }));
-      },
+        })),
+
+      addMarker: (marker) =>
+        set((state) => ({
+          markers: [...state.markers, marker],
+        })),
 
       fetchCurrentUserData: async () => {
         try {
           const { data } = await supabase.auth.getUser();
           const user = data?.user;
 
-          if (!user) {
-            return;
-          }
+          if (!user) return;
 
           const userId = user.id;
           set({ currentUserId: userId });
 
           const { fetchAllTables, subscribeToPublicDiaries } = get();
           await fetchAllTables(userId);
-
           subscribeToPublicDiaries();
         } catch (error: any) {
           console.error('사용자 데이터 가져오기 실패:', error.message);
@@ -229,7 +191,6 @@ const useTableStore = create<TableState>()(
           }));
         } catch (error: any) {
           console.error('마커 데이터 로드 오류:', error.message);
-
           set((state) => ({
             loading: { ...state.loading, markers: false },
             error: { ...state.error, markers: error.message },
@@ -254,7 +215,6 @@ const useTableStore = create<TableState>()(
           }));
         } catch (error: any) {
           console.error('프로필 데이터 로드 오류:', error.message);
-
           set((state) => ({
             loading: { ...state.loading, profiles: false },
             error: { ...state.error, profiles: error.message },
@@ -276,6 +236,48 @@ const useTableStore = create<TableState>()(
           fetchMarkers(userId),
           fetchProfiles(userId),
         ]);
+      },
+
+      subscribeToPublicDiaries: () => {
+        const { unsubscribeFromPublicDiaries } = get();
+        unsubscribeFromPublicDiaries();
+
+        const subscription = supabase
+          .channel('public_diaries_changes')
+          .on(
+            'postgres_changes',
+            {
+              event: '*',
+              schema: 'is_public',
+              table: 'diaries',
+              filter: 'is_public=eq.true',
+            },
+            () => {
+              const { fetchPublicDiaries } = get();
+              fetchPublicDiaries();
+            }
+          )
+          .subscribe();
+
+        set((state) => ({
+          subscriptions: {
+            ...state.subscriptions,
+            publicDiaries: () => subscription.unsubscribe(),
+          },
+        }));
+      },
+
+      unsubscribeFromPublicDiaries: () => {
+        const { subscriptions } = get();
+        if (subscriptions.publicDiaries) {
+          subscriptions.publicDiaries();
+          set((state) => ({
+            subscriptions: {
+              ...state.subscriptions,
+              publicDiaries: null,
+            },
+          }));
+        }
       },
     }),
     {

@@ -19,14 +19,15 @@
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
   }
 
+  .has-diary-image .today-circle:hover,
   .has-diary-image:hover {
-    background-image: transparent !important;
+    /* background-image: transparent !important; */
     background-color: var(--light-beige);
     filter: brightness(0.8);
   }
 
   .react-calendar {
-    width: 60vw !important;
+    width: 70vw !important;
     border: none;
     background-color: var(--light-beige);
     font-family: 'Paperlogy', sans-serif;
@@ -97,35 +98,14 @@
   }
 
   .today-circle {
-    border-radius: 100% !important;
-    background-color: #fef08a !important;
-    color: black !important;
-    position: relative !important;
-    background-clip: content-box !important;
-    padding: 5px !important;
+    border-radius: 4px !important;
+    border: 2px solid var(--logo-green) !important;
+    padding: 0px !important;
   }
 
   .react-calendar__tile:disabled {
-    /* opacity: 1 !important; */
     background-color: transparent !important;
-    /* color: transparent !important; */
     cursor: default !important;
-  }
-
-  /* .react-calendar__tile--active,
-  .react-calendar__tile--active:enabled:hover,
-  .react-calendar__tile--active:enabled:focus {
-    background-color: var(--logo-green) !important;
-    border-radius: 100% !important;
-    color: white !important;
-    position: relative !important;
-    background-clip: content-box !important;
-    padding: 5px !important;
-  } */
-
-  .react-calendar__tile--active.today-circle {
-    background-color: #fef08a !important;
-    color: black !important;
   }
 
   .react-calendar__tile--active.sunday-red {
@@ -147,26 +127,6 @@
     background-color: var(--light-green) !important;
     color: white !important;
   }
-
-  /* .react-calendar__century-view__decades__decade:hover,
-  .react-calendar__decade-view__years__year:hover,
-  .react-calendar__year-view__months__month:hover,
-  .react-calendar__century-view__decades__decade:focus,
-  .react-calendar__decade-view__years__year:focus,
-  .react-calendar__year-view__months__month:focus {
-    background-color: var(--logo-green) !important;
-    outline: none !important;
-    color: white !important;
-    transition: background 0.5s ease !important;
-  } */
-
-  /* .react-calendar__month-view__days__day:enabled:focus,
-  .react-calendar__month-view__days__day:enabled:hover {
-    border: 1px solid var(--logo-green) !important;
-    background-color: var(--light-beige) !important;
-    border-radius: 50% !important;
-    color: inherit !important;
-  } */
 
   .today-button {
     font-family: 'Paperlogy', sans-serif;
