@@ -32,6 +32,8 @@ interface TableState {
     profiles: string | null;
   };
   currentUserId: string | null;
+  diarySearchKeyword: string;
+  setDiarySearchKeyword: (keyword: string) => void;
 
   subscribeToPublicDiaries: () => void;
   unsubscribeFromPublicDiaries: () => void;
@@ -73,6 +75,9 @@ const useTableStore = create<TableState>()(
         profiles: null,
       },
       currentUserId: null,
+      diarySearchKeyword: '',
+      setDiarySearchKeyword: (keyword: string) =>
+        set(() => ({ diarySearchKeyword: keyword })),
 
       updateDiary: (updatedDiary) =>
         set((state) => ({
