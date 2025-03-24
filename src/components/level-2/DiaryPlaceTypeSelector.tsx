@@ -39,14 +39,17 @@ function DiaryPlaceTypeSelector({ onChange }: DiaryPlaceTypeSelectorProps) {
   };
 
   return (
-    <label
-      htmlFor="underline_select"
+    <div
       className={tm(
         'flex items-center pt-2 pb-2 text-xs border-b-1 border-[var(--logo-green)] dark:border-gray-700 cursor-pointer',
         'lg:text-base',
         getColorClass()
       )}
     >
+      <label htmlFor="underline_select" className="sr-only">
+        장소 타입 선택하기
+      </label>
+
       <select
         id="underline_select"
         value={selectedPlace}
@@ -118,7 +121,7 @@ function DiaryPlaceTypeSelector({ onChange }: DiaryPlaceTypeSelectorProps) {
           </clipPath>
         </defs>
       </svg>
-    </label>
+    </div>
   );
 }
 
