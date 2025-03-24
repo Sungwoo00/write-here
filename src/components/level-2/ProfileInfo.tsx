@@ -1,16 +1,17 @@
 import { useEffect, useState } from 'react';
 import Modal from '@/components/level-2/Modal';
+import supabase from '@/utils/supabase';
 
 const infoData = [
   { title: '앱 정보', content: 'v1.01' },
   {
     title: <span className="whitespace-nowrap">개발자에게 커피 사주기</span>,
-    content: (handleOpenModal: (title: string, qrSrc: string) => void) => (
+    content: (handleOpenModal: (title: string, qrSrc?: string) => void) => (
       <div className="flex flex-col gap-2">
         <button
           className="bg-blue-500 text-white px-3 py-1 rounded-lg font-[Paperlogy] whitespace-nowrap"
           onClick={() =>
-            handleOpenModal('토스로 커피 사주기 (Fake QR)', '/fakeQr.png')
+            handleOpenModal('토스로 커피 사주기 (Fake QR)', '/qrfake.png')
           }
         >
           토스로 커피 사주기
@@ -19,8 +20,8 @@ const infoData = [
           className="bg-yellow-400 text-black px-3 py-1 rounded-lg font-[Paperlogy] whitespace-nowrap"
           onClick={() =>
             handleOpenModal(
-              '카카오 페이로 커피 사주기 (Fake QR) ',
-              '/fakeQr.png'
+              '카카오 페이로 커피 사주기 (Fake QR)',
+              '/qrfake.png'
             )
           }
         >
@@ -42,14 +43,37 @@ const infoData = [
   },
   { title: '크레딧', content: '멋쟁이 사자들에게 깊은 감사,,, !' },
   { title: 'Location', content: 'USA' },
+  {
+    title: '더보기',
+    content: (handleOpenModal: (title: string) => void) => (
+      <div className="flex flex-col gap-2 text-left">
+        <button
+          className="text-[var(--icon-red)] hover:underline cursor-pointer font-[Paperlogy] text-left"
+          onClick={() => handleOpenModal('정말 로그아웃 하시겠습니까?')}
+        >
+          로그아웃
+        </button>
+        <button
+          className="text-[var(--icon-red)] hover:underline cursor-pointer font-[Paperlogy] text-left"
+          onClick={() => handleOpenModal('정말 회원탈퇴 하시겠습니까? 정말? ')}
+        >
+          회원탈퇴
+        </button>
+      </div>
+    ),
+  },
 ];
 
 const InfoSection = () => {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1024);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [qrTitle, setQrTitle] = useState('');
+  const [modalTitle, setModalTitle] = useState('');
+  const [modalType, setModalType] = useState<'qr' | 'confirm' | null>(null);
   const [qrImageSrc, setQrImageSrc] = useState('');
+  const [onConfirm, setOnConfirm] = useState<() => Promise<void>>(
+    () => async () => {}
+  );
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 1024);
@@ -61,9 +85,27 @@ const InfoSection = () => {
     setOpenIndex(openIndex === index ? null : index);
   };
 
-  const handleOpenModal = (title: string, qrSrc: string) => {
-    setQrTitle(title);
-    setQrImageSrc(qrSrc);
+  //  하나의 모달에서 QR 또는 로그아웃/탈퇴 구분
+  const handleOpenModal = (title: string, qrSrc?: string) => {
+    setModalTitle(title);
+    setQrImageSrc(qrSrc || '');
+    setModalType(qrSrc ? 'qr' : 'confirm');
+
+    if (!qrSrc) {
+      // 로그아웃 & 회원탈퇴 처리
+      setOnConfirm(() => async () => {
+        if (title === '정말 로그아웃 하시겠습니까?') {
+          const { error } = await supabase.auth.signOut();
+          if (error) console.error('로그아웃 실패:', error.message);
+          window.location.href = '/';
+        } else if (title === '정말 회원탈퇴 하실거에요? 정말?') {
+          const { error } = await supabase.rpc('delete_current_user');
+          if (error) console.error('회원탈퇴 실패:', error.message);
+          window.location.href = '/good-bye';
+        }
+      });
+    }
+
     setIsModalOpen(true);
   };
 
@@ -122,19 +164,20 @@ const InfoSection = () => {
         </table>
       )}
 
+      {/*  하나의 모달로 QR & 로그아웃/탈퇴 관리 */}
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        buttonConfirmText="닫기"
-        buttonCancelText=""
-        onConfirm={() => setIsModalOpen(false)}
+        buttonConfirmText={modalType === 'qr' ? '확인' : '닫기'}
+        buttonCancelText={modalType === 'qr' ? '확인' : '취소'}
+        onConfirm={modalType === 'qr' ? () => setIsModalOpen(false) : onConfirm}
       >
         <div className="p-4 text-center">
-          <h2 className="text-xl font-bold mb-4">{qrTitle}</h2>
-          {qrImageSrc && (
+          <h2 className="text-xl font-bold mb-4">{modalTitle}</h2>
+          {modalType === 'qr' && qrImageSrc && (
             <img
               src={qrImageSrc}
-              alt={`${qrTitle} QR 코드`}
+              alt={`${modalTitle} QR 코드`}
               className="w-40 h-40 mx-auto"
             />
           )}
