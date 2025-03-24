@@ -86,7 +86,7 @@ const ProfileRecord = () => {
 
       {/* 지역별 기록 테이블 */}
       <div className="flex-1 text-center lg:text-left">
-        <h2 className="text-base lg:text-xl font-bold font-[HSSanTokki] flex items-center justify-center lg:justify-start">
+        <h2 className="text-base lg:text-xl font-[HSSanTokki] flex items-center justify-center lg:justify-start">
           나의 여기 적기 기록{' '}
           <img
             src="/icons/pencil.svg"
