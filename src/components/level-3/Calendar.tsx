@@ -53,7 +53,7 @@ function Calendar({ date, onDateChange }: Omit<CalendarProps, 'diaryData'>) {
     });
   }, [diaryData]);
 
-  const handleCalendarChange = (value: any) => {
+  const handleCalendarChange = (value: unknown) => {
     if (value instanceof Date) {
       onDateChange(value);
     } else if (

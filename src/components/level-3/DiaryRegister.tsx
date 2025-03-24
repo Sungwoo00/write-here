@@ -24,7 +24,7 @@ function DiaryRegister() {
   const [contentText, setContentText] = useState('');
   const [tagText, setTagText] = useState('');
   const [date, setDate] = useState(new Date());
-  const [_, setLoading] = useState(false);
+  const setLoading = useState(false)[1];
   const [isPublic, setIsPublic] = useState(true);
 
   const addMarker = useTableStore((state) => state.addMarker);
@@ -151,8 +151,8 @@ function DiaryRegister() {
       } else {
         return imageUrl;
       }
-    } catch (error: any) {
-      console.error('이미지 업로드 대실패~:', error.message);
+    } catch (error) {
+      console.error('이미지 업로드 대실패~:', (error as Error).message);
       throw error;
     }
   };
@@ -205,7 +205,7 @@ function DiaryRegister() {
         return { ...data, img: result };
       }
     } catch (error) {
-      alert('업로드 실패했습니다');
+      console.error('업로드 실패했습니다', error);
     } finally {
       setLoading(false);
     }

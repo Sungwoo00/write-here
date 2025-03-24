@@ -7,6 +7,10 @@ export type Diary = Database['public']['Tables']['diaries']['Insert'];
 export type Marker = Database['public']['Tables']['markers']['Insert'];
 export type Profile = Database['public']['Tables']['profiles']['Insert'];
 
+interface PostgrestError {
+  message: string;
+}
+
 interface TableState {
   diaries: Diary[];
   publicDiaries: Diary[];
@@ -105,8 +109,9 @@ const useTableStore = create<TableState>()(
           const { fetchAllTables, subscribeToPublicDiaries } = get();
           await fetchAllTables(userId);
           subscribeToPublicDiaries();
-        } catch (error: any) {
-          console.error('사용자 데이터 가져오기 실패:', error.message);
+        } catch (error: unknown) {
+          const err = error as PostgrestError;
+          console.error('사용자 데이터 가져오기 실패:', err.message);
         }
       },
 
@@ -137,10 +142,11 @@ const useTableStore = create<TableState>()(
             diaries: data || [],
             loading: { ...state.loading, diaries: false },
           }));
-        } catch (error: any) {
+        } catch (error: unknown) {
+          const err = error as PostgrestError;
           set((state) => ({
             loading: { ...state.loading, diaries: false },
-            error: { ...state.error, diaries: error.message },
+            error: { ...state.error, diaries: err.message },
           }));
         }
       },
@@ -163,10 +169,11 @@ const useTableStore = create<TableState>()(
             publicDiaries: data || [],
             loading: { ...state.loading, publicDiaries: false },
           }));
-        } catch (error: any) {
+        } catch (error: unknown) {
+          const err = error as PostgrestError;
           set((state) => ({
             loading: { ...state.loading, publicDiaries: false },
-            error: { ...state.error, publicDiaries: error.message },
+            error: { ...state.error, publicDiaries: err.message },
           }));
         }
       },
@@ -189,11 +196,12 @@ const useTableStore = create<TableState>()(
             markers: data || [],
             loading: { ...state.loading, markers: false },
           }));
-        } catch (error: any) {
-          console.error('마커 데이터 로드 오류:', error.message);
+        } catch (error: unknown) {
+          const err = error as PostgrestError;
+          console.error('마커 데이터 로드 오류:', err.message);
           set((state) => ({
             loading: { ...state.loading, markers: false },
-            error: { ...state.error, markers: error.message },
+            error: { ...state.error, markers: err.message },
           }));
         }
       },
@@ -213,11 +221,12 @@ const useTableStore = create<TableState>()(
             profiles: data || [],
             loading: { ...state.loading, profiles: false },
           }));
-        } catch (error: any) {
-          console.error('프로필 데이터 로드 오류:', error.message);
+        } catch (error: unknown) {
+          const err = error as PostgrestError;
+          console.error('프로필 데이터 로드 오류:', err.message);
           set((state) => ({
             loading: { ...state.loading, profiles: false },
-            error: { ...state.error, profiles: error.message },
+            error: { ...state.error, profiles: err.message },
           }));
         }
       },
