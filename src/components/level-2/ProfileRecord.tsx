@@ -15,15 +15,20 @@ const COLORS = [
 
 const ProfileRecord = () => {
   const markers = useTableStore((state) => state.markers);
-  const [regionStats, setRegionStats] = useState([]);
+  const [regionStats, setRegionStats] = useState<
+    { name: string; value: number }[]
+  >([]);
 
   useEffect(() => {
-    const countRegions = (markers) =>
-      markers.reduce((acc, marker) => {
-        const region = marker.region || '기타';
-        acc[region] = (acc[region] || 0) + 1;
-        return acc;
-      }, {});
+    const countRegions = (markers: { region?: string }[]) =>
+      markers.reduce(
+        (acc: Record<string, number>, marker: { region?: string }) => {
+          const region = marker.region || '기타';
+          acc[region] = (acc[region] || 0) + 1;
+          return acc;
+        },
+        {}
+      );
 
     const regionCount = countRegions(markers);
     const allRegions = Object.entries(regionCount).map(([region, count]) => ({
@@ -58,7 +63,7 @@ const ProfileRecord = () => {
             outerRadius={56}
             dataKey="value"
           >
-            {regionStats.map((entry, index) => (
+            {regionStats.map((region, index) => (
               <Cell
                 key={`cell-${index}`}
                 fill={COLORS[index % COLORS.length]}
