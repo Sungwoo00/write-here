@@ -36,7 +36,7 @@ function ShowMore({ onEdit, onDelete }: ShowMoreProps) {
       <button
         onClick={toggleDropdown}
         aria-label="더 보기"
-        className="bg-transparent border-none p-0"
+        className="bg-transparent border-none p-0 cursor-pointer"
         ref={buttonRef}
       >
         <img

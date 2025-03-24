@@ -8,9 +8,9 @@ import { Diary } from '@/store/DiaryData';
 
 interface DiaryCardProps {
   diary: Diary;
+  showLikeToggle?: boolean;
 }
 
-// place type에 따라 카드 배경 색상 다르게 적용
 const getCardColor = (placeType: string) => {
   const colors: Record<string, string> = {
     cafe: 'bg-[var(--card-brown)]',
@@ -24,7 +24,7 @@ const getCardColor = (placeType: string) => {
   return colors[placeType] || 'bg-[var(--card-gray)]';
 };
 
-const DiaryCard = ({ diary }: DiaryCardProps) => {
+const DiaryCard = ({ diary, showLikeToggle = false }: DiaryCardProps) => {
   const [isLiked, setIsLiked] = useState(false);
   const navigate = useNavigate();
 
@@ -72,23 +72,24 @@ const DiaryCard = ({ diary }: DiaryCardProps) => {
             backgroundImage: `url(${diary.img?.[0] || IMAGE_PATHS.blueBottle})`,
           }}
         >
-          {/* 다크 오버레이 효과 */}
           <div className="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition-colors duration-200 rounded-t-2xl" />
 
-          <div
-            role="button"
-            tabIndex={0}
-            className="absolute bottom-3 left-3 z-10"
-            onClick={(e) => e.stopPropagation()}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') e.stopPropagation();
-            }}
-          >
-            <LikeToggle isToggled={isLiked} onToggle={handleLikeToggle} />
-          </div>
+          {showLikeToggle && (
+            <div
+              role="button"
+              tabIndex={0}
+              className="absolute bottom-3 left-3 z-10"
+              onClick={(e) => e.stopPropagation()}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') e.stopPropagation();
+              }}
+            >
+              <LikeToggle isToggled={isLiked} onToggle={handleLikeToggle} />
+            </div>
+          )}
         </div>
 
-        {/* 카드 본문 영역 */}
+        {/* 카드 본문 */}
         <div
           className={tm(
             'w-[366px] h-[120px] lg:h-[138px] lg:w-[370px] p-3 overflow-hidden flex flex-col justify-between',

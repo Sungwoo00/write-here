@@ -7,7 +7,7 @@ function PublicDiary() {
   const { fetchPublicDiaries, publicDiaries, loading, error } = useTableStore();
 
   useEffect(() => {
-    fetchPublicDiaries(); //  공개 다이어리만 가져오기
+    fetchPublicDiaries();
   }, [fetchPublicDiaries]);
 
   if (loading.publicDiaries)
@@ -29,7 +29,7 @@ function PublicDiary() {
           )}
         >
           {publicDiaries.map((diary) => (
-            <DiaryCard key={diary.diary_id} diary={diary} />
+            <DiaryCard key={diary.diary_id} diary={diary} showLikeToggle />
           ))}
         </div>
       ) : (
