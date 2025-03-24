@@ -7,6 +7,7 @@ import RendererSpring from '@/components/level-2/RendererSpring';
 import { useEffect, useState } from 'react';
 import useTableStore from '@/store/DiaryData';
 import supabase from '@/utils/supabase';
+import { useMapStore } from '@/store/Map';
 
 function DiaryDetail() {
   const { diary_id } = useParams();
@@ -20,6 +21,9 @@ function DiaryDetail() {
   const currentUserId = useTableStore((state) => state.currentUserId);
   const updateDiary = useTableStore((state) => state.updateDiary);
   const removeDiary = useTableStore((state) => state.removeDiary);
+  const markers = useTableStore((state) => state.markers);
+
+  const setCurrentLocation = useMapStore((state) => state.setCurrentLocation);
 
   const diary =
     diaries.find((d) => d.diary_id === Number(diary_id)) ??
@@ -78,6 +82,19 @@ function DiaryDetail() {
   };
 
   const handleNavigateToMap = () => {
+    if (!diary?.marker_id) {
+      alert('이 다이어리에는 위치 정보가 없습니다.');
+      return;
+    }
+
+    const marker = markers.find((m) => m.marker_id === diary.marker_id);
+
+    if (!marker) {
+      alert('해당 마커 정보를 찾을 수 없습니다.');
+      return;
+    }
+
+    setCurrentLocation(marker.lat, marker.lon);
     navigate('/write-here-map');
   };
 
@@ -163,9 +180,9 @@ function DiaryDetail() {
       <div className="mb-30 text-center">
         <button
           onClick={handleNavigateToMap}
-          className="text-[var(--logo-green)] font-[HSSanTokki]  hover:underline block mx-auto"
+          className="text-[var(--logo-green)] font-[HSSanTokki] hover:underline block mx-auto"
         >
-          지도에서 확인하기 🌍
+          지도에서 확인하기 👣
         </button>
 
         <button
