@@ -32,7 +32,7 @@ function Calendar({ date, onDateChange }: Omit<CalendarProps, 'diaryData'>) {
     const imagesMap: Record<string, string> = {};
     const datesWithDiaries = new Set<string>();
 
-    const defaultImageUrl = '/public/default.png';
+    const defaultImageUrl = '/default.png';
 
     diaryData.forEach((item) => {
       if (!item.post_date) return;
