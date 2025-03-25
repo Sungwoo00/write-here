@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import useTableStore from '@/store/DiaryData';
 import supabase from '@/utils/supabase';
 import { useMapStore } from '@/store/Map';
+import Modal from '@/components/level-2/Modal';
 
 function DiaryDetail() {
   const { diary_id } = useParams();
@@ -31,6 +32,9 @@ function DiaryDetail() {
 
   const [editedContent, setEditedContent] = useState('');
   const [isEditing, setIsEditing] = useState(false);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMsg, setModalMsg] = useState('');
 
   useEffect(() => {
     if (!diary && currentUserId) {
@@ -83,14 +87,16 @@ function DiaryDetail() {
 
   const handleNavigateToMap = () => {
     if (!diary?.marker_id) {
-      alert('이 다이어리에는 위치 정보가 없습니다.');
+      setModalMsg('이 다이어리에는 위치 정보가 없습니다.');
+      setIsModalOpen(true);
       return;
     }
 
     const marker = markers.find((m) => m.marker_id === diary.marker_id);
 
     if (!marker) {
-      alert('해당 마커 정보를 찾을 수 없습니다.');
+      setModalMsg('해당 마커 정보를 찾을 수 없습니다.');
+      setIsModalOpen(true);
       return;
     }
 
@@ -104,6 +110,10 @@ function DiaryDetail() {
 
   const contentLines = editedContent.split('\n');
   while (contentLines.length < 5) contentLines.push(' ');
+
+  const handleModalButtonClick = () => {
+    setIsModalOpen(false);
+  };
 
   return (
     <div className="w-full overflow-x-auto px-5">
@@ -192,6 +202,17 @@ function DiaryDetail() {
           이전으로 돌아가기 🡸
         </button>
       </div>
+      <Modal
+        isOpen={isModalOpen}
+        buttonConfirmText="확인"
+        buttonCancelText="닫기"
+        onConfirm={handleModalButtonClick}
+        onClose={handleModalButtonClick}
+      >
+        <p className="min-h-15 mt-2 text-[var(--dark-gray)] text-center">
+          {modalMsg}
+        </p>
+      </Modal>
     </div>
   );
 }
