@@ -24,8 +24,8 @@ export default function MarkerSelector() {
     initTempMarker,
     setPageModalOpen,
     isOverlayOpen,
-    initSearch,
     mapSearchKeyword,
+    addMarkerFromSearchResult,
   } = useMapStore();
   const [selectedMarker, setSelectedMarker] = useState<string>(MARKER_TYPES[0]);
   const [selectedColor, setSelectedColor] =
@@ -35,7 +35,7 @@ export default function MarkerSelector() {
 
   const handleToggle = () => {
     if (mapSearchKeyword) {
-      initSearch();
+      addMarkerFromSearchResult();
     } else if (!addMarkerMode) {
       toast.error('일기를 작성하려면 마커를 찍은 후 해당 마커를 클릭하세요');
 

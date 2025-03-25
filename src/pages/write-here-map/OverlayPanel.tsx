@@ -12,9 +12,7 @@ function OverlayPanel() {
     setPageModalOpen,
     initTempMarker,
     searchLocationInfo,
-    initSearch,
-    setInitialPlace,
-    setAddMarkerMode,
+    addMarkerFromSearchResult,
   } = useMapStore();
   const { diaries } = useTableStore();
 
@@ -28,9 +26,7 @@ function OverlayPanel() {
   };
 
   const handleAddMarkerClick = () => {
-    setInitialPlace(searchLocationInfo.place_name);
-    setAddMarkerMode(true);
-    initSearch();
+    addMarkerFromSearchResult();
   };
 
   useEffect(() => {
@@ -54,7 +50,11 @@ function OverlayPanel() {
       </button>
 
       <div className="mt-10">
-        {searchLocationInfo.address_name ? (
+        {markerId ? (
+          diaries
+            .filter((diary) => diary.marker_id === markerId)
+            .map((diary) => <DiaryCard key={diary.diary_id} diary={diary} />)
+        ) : searchLocationInfo.address_name ? (
           <div className="bg-white shadow-lg rounded-lg p-4 border border-gray-200 font-[Paperlogy]">
             <h3 className="text-lg font-semibold text-gray-900">
               {searchLocationInfo.place_name}
@@ -72,10 +72,6 @@ function OverlayPanel() {
               이곳에 마커 추가하기
             </button>
           </div>
-        ) : markerId ? (
-          diaries
-            .filter((diary) => diary.marker_id === markerId)
-            .map((diary) => <DiaryCard key={diary.diary_id} diary={diary} />)
         ) : (
           <DiaryRegister />
         )}

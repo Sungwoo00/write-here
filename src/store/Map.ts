@@ -47,9 +47,11 @@ interface MapState {
   initSearch: () => void;
   mapSearchKeyword: string;
   setMapSearchKeyword: (keyword: string) => void;
+
+  addMarkerFromSearchResult: () => void;
 }
 
-export const useMapStore = create<MapState>((set) => ({
+export const useMapStore = create<MapState>((set, get) => ({
   // kakaoMap: null,
   // setKaKaoMap: (kakaoMap: kakao.maps.Map) => set({ kakaoMap }),
 
@@ -127,4 +129,18 @@ export const useMapStore = create<MapState>((set) => ({
         road_address_name: '',
       },
     }),
+
+  addMarkerFromSearchResult: () => {
+    const {
+      searchLocationInfo,
+      setInitialPlace,
+      setTempMarkerRegion,
+      setAddMarkerMode,
+      initSearch,
+    } = get();
+    setInitialPlace(searchLocationInfo.place_name);
+    setTempMarkerRegion(searchLocationInfo.address_name.split(' ')[0]);
+    setAddMarkerMode(true);
+    initSearch();
+  },
 }));
