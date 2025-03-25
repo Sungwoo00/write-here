@@ -204,7 +204,7 @@ function ProfileStatus() {
 
       {/* 프로필 수정 팝업 */}
       {isPopupOpen && (
-        <div className="absolute top-[80px] lg:top-[100px] left-1/2 transform -translate-x-1/2 bg-white w-[280px] font-[Paperlogy] lg:w-[320px] p-4 rounded-xl shadow-xl">
+        <div className="absolute top-[80px] lg:top-[100px] left-1/2 transform -translate-x-1/2 bg-white w-[280px] font-[Paperlogy] lg:w-[320px] p-4 rounded-xl shadow-xl z-[2000]">
           <h2 className="text-lg font-semibold mb-2">프로필 수정</h2>
 
           {/* 닉네임 입력 */}
