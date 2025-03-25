@@ -12,6 +12,7 @@
   "dependencies": {
     "@lottiefiles/dotlottie-react": "^0.13.2",
     "@supabase/supabase-js": "^2.49.1",
+    "@types/swiper": "^6.0.0",
     "autoprefixer": "^10.4.20",
     "clsx": "^2.1.1",
     "eslint-plugin-no-relative-import-paths": "^1.6.1",

@@ -187,7 +187,6 @@ function DiaryRegister() {
         console.error('Supabase 에러:', error);
         throw new Error(error.message);
       }
-      alert('다이어리 저장완료');
 
       const diaryId = data?.diary_id;
 
