@@ -1,4 +1,5 @@
 import DrawMarker from '@/components/level-2/DrawMarker';
+import Modal from '@/components/level-2/Modal';
 import { useMapStore } from '@/store/Map';
 import { useEffect, useState } from 'react';
 
@@ -11,6 +12,8 @@ function MapSearch({ map }: MapSearchProps) {
   const [isSearchComplete, setIsSearchComplete] = useState<boolean>(false);
   const [searchResult, setSearchResult] =
     useState<kakao.maps.services.PlacesSearchResult>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMsg, setModalMsg] = useState('');
   useEffect(() => {
     if (!mapSearchKeyword) {
       setIsSearchComplete(false);
@@ -26,10 +29,12 @@ function MapSearch({ map }: MapSearchProps) {
         );
         setSearchResult(result);
       } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
-        alert('검색 결과가 존재하지 않습니다.');
+        setModalMsg('검색 결과가 존재하지 않습니다.');
+        setIsModalOpen(true);
         return;
       } else if (status === kakao.maps.services.Status.ERROR) {
-        alert('검색 결과 중 오류가 발생했습니다.');
+        setModalMsg('검색중 오류가 발생했습니다.');
+        setIsModalOpen(true);
         return;
       }
 
@@ -37,6 +42,10 @@ function MapSearch({ map }: MapSearchProps) {
       map.setBounds(bounds);
     });
   }, [map, mapSearchKeyword]);
+
+  const handleModalButtonClick = () => {
+    setIsModalOpen(false);
+  };
 
   return (
     <>
@@ -71,6 +80,17 @@ function MapSearch({ map }: MapSearchProps) {
           )}
         </>
       )}
+      <Modal
+        isOpen={isModalOpen}
+        buttonConfirmText="확인"
+        buttonCancelText="닫기"
+        onConfirm={handleModalButtonClick}
+        onClose={handleModalButtonClick}
+      >
+        <p className="min-h-15 mt-2 text-[var(--dark-gray)] text-center">
+          {modalMsg}
+        </p>
+      </Modal>
     </>
   );
 }
