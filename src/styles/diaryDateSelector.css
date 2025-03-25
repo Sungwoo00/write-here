@@ -81,6 +81,13 @@
     padding: 5px !important;
   }
 
+  .react-calendar__tile--active
+    .react-calendar__month-view__days__day:enabled:hover {
+    background-color: white !important;
+    color: var(--logo-green) !important;
+    border: 1px solid var(--logo-green) !important;
+  }
+
   .react-calendar__tile--active.today-circle {
     background-color: var(--logo-green) !important;
     color: white !important;
@@ -124,6 +131,13 @@
     background-color: inherit !important;
     border-radius: 50% !important;
   }
+
+  .disabled-date {
+    opacity: 0.5 !important;
+    pointer-events: none !important;
+    text-decoration: line-through !important;
+  }
+
   .today-button {
     font-family: 'Paperlogy', sans-serif;
   }
