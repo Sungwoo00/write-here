@@ -15,8 +15,16 @@ function DiaryDateSelector({ date, onDateChange }: DiaryDateSelectorProps) {
   const [showCalendar, setShowCalendar] = useState(false);
 
   const minDate = new Date(2001, 0, 1);
-  const currentYear = new Date().getFullYear();
-  const maxDate = new Date(currentYear + 5, 11, 31);
+
+  const now = new Date();
+  const koreaTimeOffset = 9 * 60;
+  const localTimeOffset = now.getTimezoneOffset();
+  const totalOffset = koreaTimeOffset + localTimeOffset;
+
+  const koreaDate = new Date(now.getTime() + totalOffset * 60 * 1000);
+  koreaDate.setHours(23, 59, 59, 999);
+
+  const maxDate = koreaDate;
 
   const handleCalendarChange = (value: CalendarValue) => {
     if (value instanceof Date) {
@@ -67,6 +75,8 @@ function DiaryDateSelector({ date, onDateChange }: DiaryDateSelectorProps) {
     if (isSaturday && isCurrentMonthTile) classes.push('saturday-blue');
 
     if (isSunday && isCurrentMonthTile) classes.push('sunday-red');
+
+    if (date > maxDate) classes.push('disabled-date');
 
     return classes.join(' ');
   };
