@@ -2,6 +2,11 @@ import { create } from 'zustand';
 import { Marker } from './DiaryData';
 
 type TempMarker = Omit<Marker, 'diary_id' | 'user_id'>;
+export type SearchLocationInfo = {
+  address_name: string;
+  place_name: string;
+  road_address_name: string;
+};
 
 interface MapState {
   // 여유되면 변경
@@ -29,14 +34,24 @@ interface MapState {
 
   isOverlayOpen: boolean;
   markerId: number | undefined;
+
   openOverlay: (markerId: number | undefined) => void;
   closeOverlay: () => void;
 
   isPageModalOpen: boolean;
   setPageModalOpen: (state: boolean) => void;
+
+  searchLocationInfo: SearchLocationInfo;
+
+  setSearchLocationInfo: (locationInfo: SearchLocationInfo) => void;
+  initSearch: () => void;
+  mapSearchKeyword: string;
+  setMapSearchKeyword: (keyword: string) => void;
+
+  addMarkerFromSearchResult: () => void;
 }
 
-export const useMapStore = create<MapState>((set) => ({
+export const useMapStore = create<MapState>((set, get) => ({
   // kakaoMap: null,
   // setKaKaoMap: (kakaoMap: kakao.maps.Map) => set({ kakaoMap }),
 
@@ -87,9 +102,45 @@ export const useMapStore = create<MapState>((set) => ({
 
   isOverlayOpen: false,
   markerId: undefined,
+
   openOverlay: (markerId) => set({ isOverlayOpen: true, markerId }),
   closeOverlay: () => set({ isOverlayOpen: false, markerId: undefined }),
 
   isPageModalOpen: false,
   setPageModalOpen: (state) => set({ isPageModalOpen: state }),
+
+  searchLocationInfo: {
+    address_name: '',
+    place_name: '',
+    road_address_name: '',
+  },
+  setSearchLocationInfo: (locationInfo) =>
+    set(() => ({
+      searchLocationInfo: locationInfo,
+    })),
+  mapSearchKeyword: '',
+  setMapSearchKeyword: (keyword) => set({ mapSearchKeyword: keyword }),
+  initSearch: () =>
+    set({
+      mapSearchKeyword: '',
+      searchLocationInfo: {
+        address_name: '',
+        place_name: '',
+        road_address_name: '',
+      },
+    }),
+
+  addMarkerFromSearchResult: () => {
+    const {
+      searchLocationInfo,
+      setInitialPlace,
+      setTempMarkerRegion,
+      setAddMarkerMode,
+      initSearch,
+    } = get();
+    setInitialPlace(searchLocationInfo.place_name);
+    setTempMarkerRegion(searchLocationInfo.address_name.split(' ')[0]);
+    setAddMarkerMode(true);
+    initSearch();
+  },
 }));

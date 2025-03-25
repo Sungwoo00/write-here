@@ -11,16 +11,22 @@ function OverlayPanel() {
     markerId,
     setPageModalOpen,
     initTempMarker,
+    searchLocationInfo,
+    addMarkerFromSearchResult,
   } = useMapStore();
   const { diaries } = useTableStore();
 
   const handleButtonClick = () => {
-    if (markerId) {
+    if (markerId || searchLocationInfo.address_name) {
       closeOverlay();
       initTempMarker();
     } else {
       setPageModalOpen(true);
     }
+  };
+
+  const handleAddMarkerClick = () => {
+    addMarkerFromSearchResult();
   };
 
   useEffect(() => {
@@ -48,6 +54,24 @@ function OverlayPanel() {
           diaries
             .filter((diary) => diary.marker_id === markerId)
             .map((diary) => <DiaryCard key={diary.diary_id} diary={diary} />)
+        ) : searchLocationInfo.address_name ? (
+          <div className="bg-white shadow-lg rounded-lg p-4 border border-gray-200 font-[Paperlogy]">
+            <h3 className="text-lg font-semibold text-gray-900">
+              {searchLocationInfo.place_name}
+            </h3>
+            <p className="text-sm text-gray-600 mt-1">
+              {searchLocationInfo.address_name}
+            </p>
+            <p className="text-sm text-gray-500">
+              {searchLocationInfo.road_address_name}
+            </p>
+            <button
+              onClick={handleAddMarkerClick}
+              className="cursor-pointer text-[var(--logo-green)] hover:text-[var(--light-green)] mt-5"
+            >
+              이곳에 마커 추가하기
+            </button>
+          </div>
         ) : (
           <DiaryRegister />
         )}
