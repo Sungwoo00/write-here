@@ -48,10 +48,9 @@
 ## 🌟 프로젝트 소개
 
 > 멋쟁이 사자처럼 프론트엔드 부트캠프 12기 파이널 프로젝트
-> 자체 제작한 피그마 시안으로 제작 된 프로젝트 입니다.
 
-- **여기적기**는 **[5늘 어디가?]조**가 [Vite](https://ko.vite.dev/), [TypeScript](https://www.typescriptlang.org/), [React](https://ko.react.dev/) , [Zustand](https://zustand-demo.pmnd.rs/), [Tailwind](https://tailwindcss.com/) 등을 사용하여 개발한 **반응형 웹 애플리케이션**입니다.  
-  가독성이 높고 직관적인 UI/UX를 제공합니다.
+- **여기적기**는 **[5늘 어디가?]조**가 Vite, TypeScript, React, Zustand, Tailwind, 카카오맵 API를 사용하여 개발한 지도 기반 다이어리 웹 어플리케이션입니다.  
+- 반응형으로 제작되었으며, 가독성이 높고 직관적인 UI/UX를 제공합니다.
 - 프로젝트 진행기간 : 2025.02.24. ~ 2025.03.25.
 
 <br>
@@ -61,10 +60,10 @@
 
 | 이름                                                                                                                                                                                   | 역할    | 주요 기여                                               | GitHub                                    |
 | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ------------------------------------------------------- | ----------------------------------------- |
-| <div align="center"><img src="https://github.com/user-attachments/assets/712e6ff7-a726-40c0-aaa1-bfaa4e722d69" width="80" height="80" alt="정주연"/> <br> **정주연**</div> | 팀 리더 | 스크럼 마스터,                             | [BomEllen](https://github.com/BomEllen) |
-| <div align="center"><img src="https://github.com/user-attachments/assets/5cffc33c-d2ad-4bf4-937b-b04255a0283c" width="80" height="80" alt="김민규"/> <br> **김민규**</div> | 조원    | 백엔드 설계,  | [MinQyu](https://github.com/MinQyu) |
-| <div align="center"><img src="https://github.com/user-attachments/assets/64fc2c21-3b05-4d51-ba05-6b84a0e1a985" width="80" height="80" alt="이성우"/> <br> **이성우**</div> | 조원    | 백엔드 설계,             | [Sungwoo00](https://github.com/Sungwoo00)       |
-| <div align="center"><img src="https://github.com/user-attachments/assets/fd0869f3-596d-4cfb-828e-0289bccbd7b4" width="80" height="80" alt="정성민"/> <br> **정성민**</div> | 조원    | 메인페이지,                   | [karrpp](https://github.com/karrpp) |
+| <div align="center"><img src="https://github.com/user-attachments/assets/712e6ff7-a726-40c0-aaa1-bfaa4e722d69" width="80" height="80" alt="정주연"/> <br> **정주연**</div> | 팀 리더 | 스크럼 마스터, 피그마 디자인, 일기 페이지 | [BomEllen](https://github.com/BomEllen) |
+| <div align="center"><img src="https://github.com/user-attachments/assets/5cffc33c-d2ad-4bf4-937b-b04255a0283c" width="80" height="80" alt="김민규"/> <br> **김민규**</div> | 조원    | 백엔드 설계, 프론트엔드 구조 설계, 로그인, 회원가입, 지도 페이지 | [MinQyu](https://github.com/MinQyu) |
+| <div align="center"><img src="https://github.com/user-attachments/assets/64fc2c21-3b05-4d51-ba05-6b84a0e1a985" width="80" height="80" alt="이성우"/> <br> **이성우**</div> | 조원    | 피그마 디자인, 백엔드 설계, 캘린더 페이지 | [Sungwoo00](https://github.com/Sungwoo00)       |
+| <div align="center"><img src="https://github.com/user-attachments/assets/fd0869f3-596d-4cfb-828e-0289bccbd7b4" width="80" height="80" alt="정성민"/> <br> **정성민**</div> | 조원    | 메인페이지, 카카오맵 API, 프로필 페이지 | [karrpp](https://github.com/karrpp) |
 
 <br>
 
