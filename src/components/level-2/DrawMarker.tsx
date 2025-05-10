@@ -35,7 +35,7 @@ function DrawMarker({ map, marker, searchLocationInfo }: RenderMarkerProps) {
       }
       if (!isOverlayOpen) {
         map.setCenter(position);
-        map.panBy(0, 300);
+        map.panBy(0, 200);
         openOverlay(marker_id);
       } else {
         openOverlay(marker_id);

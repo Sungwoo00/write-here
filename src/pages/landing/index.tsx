@@ -5,7 +5,7 @@ function Landing() {
   const navigate = useNavigate();
   return (
     <div className="relative flex flex-grow flex-col items-center justify-center font-[HSSanTokki] bg-[var(--light-beige)]">
-      <div className="gap-[25px] flex flex-grow flex-col items-center justify-center">
+      <div className="lg:min-h-[600px] gap-[25px] flex flex-col items-center justify-center">
         <h2 className="text-xl md:text-[28px] text-[var(--logo-green)]">
           여기 저기
         </h2>
